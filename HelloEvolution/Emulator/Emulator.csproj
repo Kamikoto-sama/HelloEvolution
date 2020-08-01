@@ -5,4 +5,14 @@
 		<TargetFramework>netcoreapp3.1</TargetFramework>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Update="src\map.txt">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Ninject" Version="3.3.4" />
+	</ItemGroup>
+
 </Project>

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 
 namespace Emulator
 {
@@ -6,7 +9,6 @@ namespace Emulator
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
 		}
 	}
 }
