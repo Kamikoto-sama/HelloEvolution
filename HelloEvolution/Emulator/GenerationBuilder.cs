@@ -16,21 +16,24 @@ namespace Emulator
 			this.genomeBuilder = genomeBuilder;
 		}
 		
-		public IEnumerable<Bot> CreateInitial()
+		public ICollection<Bot> CreateInitial()
 		{
 			return Enumerable
 				.Range(0, emulationConfig.GenerationSize)
-				.Select(_ =>
-				{
-					var genome = genomeBuilder.Build();
-					var initialHealth = emulationConfig.BotInitialHealth;
-					return new Bot(genome, initialHealth);
-				});
+				.Select(_ => new Bot(genomeBuilder.Build(), emulationConfig))
+				.ToArray();
 		}
 
-		public IEnumerable<Bot> BuildNew(IEnumerable<Bot> survivedBots)
+		public ICollection<Bot> BuildNew(IEnumerable<Bot> survivedBots)
 		{
-			throw new System.NotImplementedException();
+			return survivedBots
+				.SelectMany(parent => Enumerable
+					.Range(0, emulationConfig.EachParentCopiesCount)
+					.Select(_ => new Bot(parent.Genome, emulationConfig)))
+				.Concat(Enumerable
+					.Range(0, emulationConfig.MutationsCount)
+					.Select(_ => new Bot(genomeBuilder.Build(), emulationConfig)))
+				.ToArray();
 		}
 	}
 }

@@ -17,10 +17,18 @@ namespace Emulator
 			this.objects = objects;
 		}
 
+		public event Action<WorldMapChangedEvent> CellChanged;
 		public IWorldObject this[int x, int y]
 		{
 			get => objects[x, y];
-			set => objects[x, y] = value;
+			set
+			{
+				var prevValue = objects[x, y];
+				objects[x, y] = value;
+				var coordinates = new Point(x, y);
+				var eventArgs = new WorldMapChangedEvent(coordinates, prevValue);
+				CellChanged?.Invoke(eventArgs);
+			}
 		}
 
 		public bool InBounds(Point point) =>
