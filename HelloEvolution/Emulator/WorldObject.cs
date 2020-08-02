@@ -13,5 +13,7 @@ namespace Emulator
 			Position = position;
 			Type = type;
 		}
+
+		public override string ToString() => Type.ToString();
 	}
 }

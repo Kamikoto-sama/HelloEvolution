@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Emulator
 {
@@ -15,12 +16,19 @@ namespace Emulator
 		public int BotMaxHealth { get; set; } = 90;
 		public int FoodHealthIncrease { get; set; } = 10;
 
-		public int PoisonCountInMap { get; set; } = 50;
-		public int FoodCountInMap { get; set; } = 50;
-		public string TxtMapFilePath { get; set; } = "map.txt";
+		public string TxtMapFilePath { get; set; } = "src/map.txt";
+		public int InitialPoisonCountInMap { get; set; } = 50;
+		public int InitialFoodCountInMap { get; set; } = 50;
 
-		public int GoalGenerationLifeCount { get; set; } = 1000;
-		public DelayTypes DelayType { get; set; } = DelayTypes.None;
+		public Dictionary<WorldObjectTypes, int> ItemSpawnIterationDelay { get; } =
+			new Dictionary<WorldObjectTypes, int>
+			{
+				{WorldObjectTypes.Food, 5},
+				{WorldObjectTypes.Poison, 5},
+			};
+
+		public int GoalGenerationLifeCount { get; set; } = 100000;
+		public DelayTypes DelayType { get; set; } = DelayTypes.NoDelay;
 		public TimeSpan IterationDelay { get; set; } = TimeSpan.FromMilliseconds(500);
 	}
 }

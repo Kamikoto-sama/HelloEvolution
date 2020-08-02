@@ -4,6 +4,6 @@
 	{
 		PerEachBotStep,
 		PerEachGenIteration,
-		None
+		NoDelay
 	}
 }

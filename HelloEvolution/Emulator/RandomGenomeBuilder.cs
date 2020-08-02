@@ -24,8 +24,10 @@ namespace Emulator
 				.Range(0, emulationConfig.GenomeSize)
 				.Select(_ =>
 				{
-					var commandIndex = random.Next(0, availableCommands.TotalSubtypesCount);
-					return availableCommands.GetCommandBySubtypeIndex(commandIndex);
+					var commandIndex = random.Next(0, availableCommands.CommandsCount);
+					var commandFactory = availableCommands[commandIndex];
+					var subtypeIndex = random.Next(0, commandFactory.SubtypesCount);
+					return commandFactory.Create(subtypeIndex);
 				})
 				.ToList();
 		}

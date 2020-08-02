@@ -9,18 +9,18 @@ namespace Emulator
 	public class CommandsCollection: ICommandsCollection
 	{
 		private readonly ICommandFactory[] availableCommands;
-		public int CommandCount { get; private set; }
+		public int CommandsCount { get; private set; }
 		public int TotalSubtypesCount { get; private set; }
 		public ICommandFactory this[int index] => availableCommands[index];
 
 		public CommandsCollection(IEnumerable<ICommandFactory> availableCommands)
 		{
-			CommandCount = 0;
+			CommandsCount = 0;
 			TotalSubtypesCount = 0;
 			this.availableCommands = availableCommands
 				.Select(command =>
 				{
-					CommandCount++;
+					CommandsCount++;
 					TotalSubtypesCount += command.SubtypesCount;
 					return command;
 				})
@@ -34,7 +34,7 @@ namespace Emulator
 			{
 				currentSubtypesCount += command.SubtypesCount;
 				if (currentSubtypesCount - 1 >= index)
-					return command.Create(currentSubtypesCount % command.SubtypesCount);
+					return command.Create(index % command.SubtypesCount);
 			}
 
 			var message = $"Max subtype index is {TotalSubtypesCount - 1}, but got {index}";

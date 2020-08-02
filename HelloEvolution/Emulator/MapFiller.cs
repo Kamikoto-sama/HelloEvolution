@@ -18,9 +18,9 @@ namespace Emulator
 		public void FillItems(WorldMap map)
 		{
 			IWorldObject foodFactory(Point pos) => new WorldObject(pos, WorldObjectTypes.Food);
-			PlaceObject(foodFactory, config.FoodCountInMap, map);
+			PlaceObject(foodFactory, config.InitialFoodCountInMap, map);
 			IWorldObject poisonFactory(Point pos) => new WorldObject(pos, WorldObjectTypes.Poison);
-			PlaceObject(poisonFactory, config.PoisonCountInMap, map);
+			PlaceObject(poisonFactory, config.InitialPoisonCountInMap, map);
 		}
 
 		public void FillBots(WorldMap map, IEnumerable<Bot> bots)

@@ -7,12 +7,13 @@
 
 	<ItemGroup>
 	  <None Update="src\map.txt">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="Ninject" Version="3.3.4" />
+	  <PackageReference Include="Ninject.Extensions.Conventions" Version="3.3.0" />
 	</ItemGroup>
 
 </Project>

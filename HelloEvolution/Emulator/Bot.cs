@@ -36,5 +36,9 @@ namespace Emulator
 			if (Health > config.BotMaxHealth)
 				Health -= Health - config.BotMaxHealth;
 		}
+
+		public override string ToString() => 
+			$"{(IsDead? "Dead": Health.ToString())} " +
+			$"index={currentCommandIndex} {Direction}";
 	}
 }

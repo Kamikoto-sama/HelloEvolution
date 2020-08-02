@@ -9,7 +9,7 @@ namespace Emulator.Commands
 
 		public UnconditionalJumpCommand(int jumpValue) => this.jumpValue = jumpValue;
 
-		public override void Execute(Bot bot, WorldMap map) => bot.MoveCommandPointer(jumpValue);
+		public override void Execute(Bot bot, WorldMap map) => bot.MoveCommandPointer(jumpValue + 32);
 	}
 	
 	public class UnconditionalJumpCommandFactory: ICommandFactory
