@@ -39,7 +39,15 @@ namespace Emulator
 				for (var colIndex = 0; colIndex < mapWidth; colIndex++)
 				{
 					var objPosition = new Point(colIndex, rowIndex);
-					var objType = mapRow[colIndex] == '#' ? WorldObjectTypes.Wall : WorldObjectTypes.Empty;
+					WorldObjectTypes objType;
+					try
+					{
+						objType = mapRow[colIndex] == '#' ? WorldObjectTypes.Wall : WorldObjectTypes.Empty;
+					}
+					catch (IndexOutOfRangeException)
+					{
+						throw new InvalidDataException("Map size doesnt match map schema");
+					}
 					objects[colIndex, rowIndex] = new WorldObject(objPosition, objType);
 				}
 				rowIndex++;

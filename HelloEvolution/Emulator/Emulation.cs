@@ -43,35 +43,27 @@ namespace Emulator
 
 		public void Start()
 		{
-			if (Map == null || Bots == null)
-				Prepare();
-			while (true)
+			Bots ??= generationBuilder.CreateInitial();
+			while (StatusMonitor.GenerationIterationNumber >= config.GoalGenerationLifeCount)
 			{
+				Map = mapProvider.GetMap();
+				mapFiller.FillItems(Map);
 				mapFiller.FillBots(Map, Bots);
 				StatusMonitor.GenerationNumber++;
-				if (RunGeneration())
-					break;
+				RunGeneration();
 				var survivedBots = Bots.Where(bot => !bot.IsDead).ToArray();
 				StatusMonitor.SurvivedBots = survivedBots;
 				Bots = generationBuilder.Rebuild(survivedBots);
-				mapFiller.RemoveObjectsFromMap(survivedBots, Map);
 			}
 		}
 
-		private void Prepare()
-		{
-			Bots = generationBuilder.CreateInitial();
-			Map = mapProvider.GetMap();
-			mapFiller.FillItems(Map);
-		}
-
-		private bool RunGeneration()
+		private void RunGeneration()
 		{
 			StatusMonitor.BotsAliveCount = config.GenerationSize;
 			while (StatusMonitor.BotsAliveCount > config.ParentsCount)
 			{
-				if (++StatusMonitor.GenerationIterationNumber < config.GoalGenerationLifeCount)
-					return true;
+				if (++StatusMonitor.GenerationIterationNumber >= config.GoalGenerationLifeCount)
+					break;
 				foreach (var bot in Bots.Where(bot => !bot.IsDead))
 				{
 					Command command;
@@ -89,7 +81,8 @@ namespace Emulator
 					if (bot.IsDead)
 					{
 						Map[bot.Position] = new WorldObject(bot.Position, WorldObjectTypes.Empty);
-						StatusMonitor.BotsAliveCount--;
+						if (--StatusMonitor.BotsAliveCount <= config.ParentsCount)
+							break;
 					}
 					
 					BotStepPerformed?.Invoke(bot);
@@ -105,7 +98,6 @@ namespace Emulator
 			}
 			StatusMonitor.GenIterationsStatistics.Add(StatusMonitor.GenerationIterationNumber);
 			StatusMonitor.GenerationIterationNumber = 0;
-			return false;
 		}
 
 		private void SpawnItem(WorldObjectTypes objectType)
@@ -115,6 +107,8 @@ namespace Emulator
 			if (iterationsCount < config.ItemSpawnIterationDelay[objectType])
 				return;
 			iterationsCountSinceLastItemSpawn[objectType] = 0;
+			if (Map.ObjectsCounts[objectType] >= config.InitialItemCountInMap[objectType])
+				return;
 			IWorldObject ObjFactory(Point pos) => new WorldObject(pos, objectType);
 			mapFiller.PlaceObject(ObjFactory, 1, Map);
 		}

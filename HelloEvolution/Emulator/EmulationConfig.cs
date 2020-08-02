@@ -11,15 +11,18 @@ namespace Emulator
 		public int EachParentCopiesCount { get; set; } = 7;
 		public int MutationsCount { get; set; } = 8;
 		
-		public int BotInitialHealth { get; set; } = 40;
+		public int BotInitialHealth { get; set; } = 35;
 		public Directions BotInitialDirection { get; set; } = Directions.Up;
 		public int BotMaxHealth { get; set; } = 90;
 		public int FoodHealthIncrease { get; set; } = 10;
 
 		public string TxtMapFilePath { get; set; } = "src/map.txt";
-		public int InitialPoisonCountInMap { get; set; } = 50;
-		public int InitialFoodCountInMap { get; set; } = 50;
-
+		public Dictionary<WorldObjectTypes, int> InitialItemCountInMap { get; } =
+			new Dictionary<WorldObjectTypes, int>
+			{
+				{WorldObjectTypes.Food, 50},
+				{WorldObjectTypes.Poison, 50},
+			};
 		public Dictionary<WorldObjectTypes, int> ItemSpawnIterationDelay { get; } =
 			new Dictionary<WorldObjectTypes, int>
 			{

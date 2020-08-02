@@ -1,4 +1,5 @@
-﻿using Emulator.Commands;
+﻿using System;
+using Emulator.Commands;
 using Emulator.Interfaces;
 using Ninject;
 using Ninject.Extensions.Conventions;
@@ -27,6 +28,9 @@ namespace Emulator
 
 			var emulation = container.Get<Emulation>();
 			emulation.Start();
+			foreach (var count in emulation.StatusMonitor.GenIterationsStatistics)
+				Console.WriteLine(count);
+			Console.WriteLine($"|{emulation.StatusMonitor.GenerationNumber}|");
 		}
 	}
 }
