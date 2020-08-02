@@ -29,7 +29,7 @@ namespace Emulator
 			return survivedBots
 				.SelectMany(parent => Enumerable
 					.Range(0, emulationConfig.EachParentCopiesCount)
-					.Select(_ => new Bot(parent.Genome, emulationConfig)))
+					.Select(_ => new Bot(parent.Genome, emulationConfig, parent.GenerationNumber + 1)))
 				.Concat(Enumerable
 					.Range(0, emulationConfig.MutationsCount)
 					.Select(_ => new Bot(genomeBuilder.Build(), emulationConfig)))

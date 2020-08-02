@@ -3,36 +3,31 @@ using Emulator.Interfaces;
 
 namespace Emulator.Commands
 {
-	public class MoveCommand: Command
+	public class MoveCommand: DirectionalCommand
 	{
 		public override bool IsFinal { get; } = true;
 
-		private readonly Directions direction;
-
-		public MoveCommand(int directionIndex) => direction = (Directions) directionIndex;
+		public MoveCommand(int index): base(index)
+		{
+		}
 
 		public override void Execute(Bot bot, WorldMap map)
 		{
-			var movementDirectionOffset = ComputeDirectionOffset(bot.Direction, direction);
-			var botPosition = bot.Position;
-			botPosition.Offset(movementDirectionOffset);
-			if (!map.InBounds(botPosition))
-				return;
-			var objAtNewPosition = map[botPosition.X, botPosition.Y].Type;
-			switch (objAtNewPosition)
+			var objAtNewPosition = GetObjByBotDirection(bot.Direction, Direction, bot.Position, map);
+			switch (objAtNewPosition.Type)
 			{
 				case WorldObjectTypes.Poison:
 					bot.IsDead = true;
 					break;
 				case WorldObjectTypes.Food:
 					bot.IncreaseHealthByFood();
-					MoveBot(bot, map, botPosition);
+					MoveBot(bot, map, objAtNewPosition.Position);
 					break;
 				case WorldObjectTypes.Empty:
-					MoveBot(bot, map, botPosition);
+					MoveBot(bot, map, objAtNewPosition.Position);
 					break;
 			}
-			bot.MoveCommandPointer((int) objAtNewPosition);
+			bot.MoveCommandPointer((int) objAtNewPosition.Type);
 		}
 
 		private void MoveBot(Bot bot, WorldMap map, Point newPosition)

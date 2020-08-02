@@ -16,11 +16,13 @@ namespace Emulator
 		public bool IsDead { get; set; }
 		public Command CurrentCommand => Genome[currentCommandIndex];
 		private int currentCommandIndex;
+		public int GenerationNumber { get; }
 
-		public Bot(IReadOnlyList<Command> genome, EmulationConfig config)
+		public Bot(IReadOnlyList<Command> genome, EmulationConfig config, int generationNumber=1)
 		{
 			this.config = config;
 			Genome = genome;
+			GenerationNumber = generationNumber;
 			Health = config.BotInitialHealth;
 			Direction = config.BotInitialDirection;
 		}

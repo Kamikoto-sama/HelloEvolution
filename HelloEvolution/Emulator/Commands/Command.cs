@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using Emulator.Interfaces;
 
 namespace Emulator.Commands
 {
@@ -19,12 +20,17 @@ namespace Emulator.Commands
 			new Point(-1, -1), 
 		};
 		
-		protected static Point ComputeDirectionOffset(Directions botDirection, Directions actionDirection)
+		protected static IWorldObject GetObjByBotDirection(Directions botDirection, 
+			Directions actionDirection, Point botPosition, WorldMap map)
 		{
 			var botDirectionIndex = (int) botDirection;
 			var actionDirectionIndex = (int) actionDirection;
 			var resultDirectionIndex = (botDirectionIndex + actionDirectionIndex) % DirectionsOffsets.Length;
-			return DirectionsOffsets[resultDirectionIndex];
+			var resultDirection = DirectionsOffsets[resultDirectionIndex];
+			botPosition.Offset(resultDirection);
+			return map.InBounds(botPosition) 
+				? map[botPosition] 
+				: new WorldObject(botPosition, WorldObjectTypes.Wall);
 		}
 	}
 }

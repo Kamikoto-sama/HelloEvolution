@@ -8,6 +8,7 @@ namespace Emulator
 {
 	public class Emulation
 	{
+		public StateMonitor StateMonitor { get; }
 		private readonly IWorldMapProvider mapProvider;
 		private readonly IWorldMapFiller mapFiller;
 		private readonly IGenerationBuilder generationBuilder;
@@ -18,8 +19,10 @@ namespace Emulator
 		public Emulation(IWorldMapProvider mapProvider, 
 			IWorldMapFiller mapFiller,
 			IGenerationBuilder generationBuilder,
-			EmulationConfig config)
+			EmulationConfig config,
+			StateMonitor stateMonitor)
 		{
+			StateMonitor = stateMonitor;
 			this.mapProvider = mapProvider;
 			this.mapFiller = mapFiller;
 			this.generationBuilder = generationBuilder;
@@ -30,12 +33,13 @@ namespace Emulator
 		{
 			if (map == null || bots == null)
 				Prepare();
-			while (true)
+			while (++StateMonitor.GenerationNumber <= config.GoalGenerationLifeCount)
 			{
 				mapFiller.FillBots(map, bots);
 				map.CellChanged += AddItem;
 				RunGeneration();
 				var survivedBots = bots.Where(bot => !bot.IsDead).ToArray();
+				StateMonitor.SurvivedBots = survivedBots;
 				bots = generationBuilder.BuildNew(survivedBots);
 				map.CellChanged -= AddItem;
 				mapFiller.RemoveObjectsFromMap(survivedBots, map);
