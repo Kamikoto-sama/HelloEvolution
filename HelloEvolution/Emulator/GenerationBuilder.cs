@@ -24,7 +24,7 @@ namespace Emulator
 				.ToArray();
 		}
 
-		public ICollection<Bot> BuildNew(IEnumerable<Bot> survivedBots)
+		public ICollection<Bot> Rebuild(IEnumerable<Bot> survivedBots)
 		{
 			return survivedBots
 				.SelectMany(parent => Enumerable

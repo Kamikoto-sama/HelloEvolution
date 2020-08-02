@@ -5,6 +5,6 @@ namespace Emulator.Interfaces
 	public interface IGenerationBuilder
 	{
 		ICollection<Bot> CreateInitial();
-		ICollection<Bot> BuildNew(IEnumerable<Bot> survivedBots);
+		ICollection<Bot> Rebuild(IEnumerable<Bot> survivedBots);
 	}
 }

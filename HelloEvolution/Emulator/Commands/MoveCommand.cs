@@ -17,7 +17,7 @@ namespace Emulator.Commands
 			switch (objAtNewPosition.Type)
 			{
 				case WorldObjectTypes.Poison:
-					bot.IsDead = true;
+					bot.Health = 0;
 					break;
 				case WorldObjectTypes.Food:
 					bot.IncreaseHealthByFood();
