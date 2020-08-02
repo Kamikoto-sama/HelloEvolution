@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Emulator.Commands;
 using Emulator.Interfaces;
 
 namespace Emulator
@@ -32,9 +33,11 @@ namespace Emulator
 			while (true)
 			{
 				mapFiller.FillBots(map, bots);
+				map.CellChanged += AddItem;
 				RunGeneration();
 				var survivedBots = bots.Where(bot => !bot.IsDead).ToArray();
 				bots = generationBuilder.BuildNew(survivedBots);
+				map.CellChanged -= AddItem;
 				mapFiller.RemoveObjectsFromMap(survivedBots, map);
 			}
 		}
@@ -44,7 +47,6 @@ namespace Emulator
 			bots = generationBuilder.CreateInitial();
 			map = mapProvider.GetMap();
 			mapFiller.FillItems(map);
-			map.CellChanged += AddItem;
 		}
 
 		private void RunGeneration()
@@ -60,9 +62,11 @@ namespace Emulator
 						command = bot.CurrentCommand;
 						command.Execute(bot, map);
 					} while (!command.IsFinal);
-
-					if (bot.IsDead)
-						aliveBotsCount--;
+					
+					bot.DecreaseHealth(1);
+					if (!bot.IsDead) continue;
+					map[bot.Position] = new WorldObject(bot.Position, WorldObjectTypes.Empty);
+					aliveBotsCount--;
 				}
 			}
 		}
@@ -71,7 +75,8 @@ namespace Emulator
 		{
 			var currentObjType = map[eventArgs.Coordinates.X, eventArgs.Coordinates.Y].Type;
 			var prevObjType = eventArgs.PreviousCellObject.Type;
-			if (prevObjType == currentObjType)
+			if (prevObjType == currentObjType ||
+			    !new[] {WorldObjectTypes.Food, WorldObjectTypes.Poison}.Contains(prevObjType))
 				return;
 			IWorldObject objFactory(Point pos) => new WorldObject(pos, prevObjType);
 			mapFiller.PlaceObject(objFactory, 1, map);

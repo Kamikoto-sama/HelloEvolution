@@ -31,6 +31,12 @@ namespace Emulator
 			}
 		}
 
+		public IWorldObject this[Point coordinates]
+		{
+			get => this[coordinates.X, coordinates.Y];
+			set => this[coordinates.X, coordinates.Y] = value;
+		}
+
 		public bool InBounds(Point point) =>
 			!(point.X >= Width || point.X < 0 ||
 			  point.Y >= Height || point.Y < 0);

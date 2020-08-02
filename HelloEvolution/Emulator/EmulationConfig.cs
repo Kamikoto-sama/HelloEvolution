@@ -12,6 +12,7 @@
 		public string TxtMapFilePath { get; set; } = "map.txt";
 		public int PoisonCountInMap { get; set; } = 50;
 		public int FoodCountInMap { get; set; } = 50;
-		public Directions BotInitialDirectionDirection { get; set; } = Directions.Up;
+		public Directions BotInitialDirection { get; set; } = Directions.Up;
+		public int FoodHealthIncrease { get; set; } = 10;
 	}
 }

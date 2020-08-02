@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Emulator.Commands;
 
 namespace Emulator.Interfaces
 {

@@ -1,4 +1,6 @@
-﻿namespace Emulator.Interfaces
+﻿using Emulator.Commands;
+
+namespace Emulator.Interfaces
 {
 	public interface ICommandFactory
 	{
