@@ -1,6 +1,6 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Emulator", "Emulator\Emulator.csproj", "{AF4FB42A-8F72-4F88-98B0-2296468F93C8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmulationModel", "EmulationModel\EmulationModel.csproj", "{AF4FB42A-8F72-4F88-98B0-2296468F93C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
