@@ -5,7 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EmulationView"
         mc:Ignorable="d"
-        Title="World map" Height="300" Width="500" Loaded="Window_Loaded" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize">
-    <Grid x:Name="MapField">
-    </Grid>
+        Title="Main window" 
+        Height="300" Width="300" 
+        WindowStartupLocation="CenterScreen">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid>
+            <Button x:Name="PrepareEmulationBtn" Content="Prepare emulation" 
+                    FontSize="30" Margin="40 100" 
+                    Click="PrepareEmulation" Cursor="Hand"/>
+        </Grid>
+    </ScrollViewer>
 </Window>
