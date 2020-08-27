@@ -15,11 +15,11 @@ namespace EmulationModel.Commands
 			var lookingObj = GetObjByBotDirection(bot.Direction, Direction, bot.Position, map);
 			switch (lookingObj.Type)
 			{
-				case WorldObjectTypes.Food:
+				case WorldObjectType.Food:
 					bot.IncreaseHealthByFood();
 					break;
-				case WorldObjectTypes.Poison:
-					map[lookingObj.Position] = new WorldMapCell(lookingObj.Position, WorldObjectTypes.Food);
+				case WorldObjectType.Poison:
+					map[lookingObj.Position] = new WorldMapCell(lookingObj.Position, WorldObjectType.Food);
 					break;
 			}
 			bot.MoveCommandPointer((int) lookingObj.Type);

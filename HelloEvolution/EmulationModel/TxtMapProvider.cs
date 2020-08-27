@@ -39,10 +39,10 @@ namespace EmulationModel
 				for (var colIndex = 0; colIndex < mapWidth; colIndex++)
 				{
 					var objPosition = new Point(colIndex, rowIndex);
-					WorldObjectTypes objType;
+					WorldObjectType objType;
 					try
 					{
-						objType = mapRow[colIndex] == '#' ? WorldObjectTypes.Wall : WorldObjectTypes.Empty;
+						objType = mapRow[colIndex] == '#' ? WorldObjectType.Wall : WorldObjectType.Empty;
 					}
 					catch (IndexOutOfRangeException)
 					{

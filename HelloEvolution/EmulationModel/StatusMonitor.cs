@@ -8,6 +8,6 @@ namespace EmulationModel
 		public int GenerationIterationNumber { get; set; }
 		public int BotsAliveCount { get; set; }
 		public ICollection<Bot> SurvivedBots { get; set; }
-		public List<int> GenIterationsStatistics { get; set; } = new List<int>();
+		public List<int> GenIterationsStatistics { get; } = new List<int>();
 	}
 }

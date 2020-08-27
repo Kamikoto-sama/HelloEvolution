@@ -1,82 +1,171 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
 using EmulationModel.Commands;
 using EmulationModel.Interfaces;
 
 namespace EmulationModel
 {
-	public class Emulation
+	public class Emulation: BackgroundWorker
 	{
 		private readonly IWorldMapProvider mapProvider;
 		private readonly IWorldMapFiller mapFiller;
 		private readonly IGenerationBuilder generationBuilder;
-		private readonly EmulationConfig config;
-		private readonly Dictionary<WorldObjectTypes, int> iterationsCountSinceLastItemSpawn;
+		private readonly Dictionary<WorldObjectType, int> iterationsCountSinceLastItemSpawn;
+		private readonly object pauseLocker = new object();
+		private readonly object restartLocker = new object();
+		private readonly EmulationState state;
 
+		public EmulationConfig Config { get; }
 		public WorldMap Map { get; private set; }
 		public IEnumerable<Bot> Bots { get; private set; }
-		public StatusMonitor StatusMonitor { get; }
+		public StatusMonitor StatusMonitor { get; private set; }
 
+		public event Action<EmulationStateName> StateChanged;
 		public event Action GenIterationPerformed;
 
 		public Emulation(IWorldMapProvider mapProvider, 
-			IWorldMapFiller mapFiller,
-			IGenerationBuilder generationBuilder,
-			EmulationConfig config,
-			StatusMonitor statusMonitor)
+						IWorldMapFiller mapFiller,
+						IGenerationBuilder generationBuilder,
+						EmulationConfig config)
 		{
-			StatusMonitor = statusMonitor;
+			StatusMonitor = new StatusMonitor();
+			state = new EmulationState();
+			state.Changed += state => StateChanged?.Invoke(state);
 			this.mapProvider = mapProvider;
 			this.mapFiller = mapFiller;
 			this.generationBuilder = generationBuilder;
-			this.config = config;
-			iterationsCountSinceLastItemSpawn = new Dictionary<WorldObjectTypes, int>
+			this.Config = config;
+			iterationsCountSinceLastItemSpawn = new Dictionary<WorldObjectType, int>
 			{
-				{WorldObjectTypes.Food, 0},
-				{WorldObjectTypes.Poison, 0},
+				{WorldObjectType.Food, 0},
+				{WorldObjectType.Poison, 0},
 			};
 		}
 
-		public void Start()
+		public bool Pause()
 		{
-			Bots ??= generationBuilder.CreateInitial();
-			while (StatusMonitor.GenerationIterationNumber < config.GoalGenerationLifeCount)
+			if (state.Pending || state.Name != EmulationStateName.InAction)
+				return false;
+			state.Change(EmulationStateName.PendedToPause, false);
+			return true;
+		}
+
+		public bool Continue()
+		{
+			if (state.Pending && state.Name != EmulationStateName.PendedToRestart || !state.Paused)
+				return false;
+			lock(pauseLocker)
+				Monitor.Pulse(pauseLocker);
+			return true;
+		}
+
+		public bool Restart()
+		{
+			if (state.Pending)
+				return false;
+			switch (state.Name)
+			{
+				case EmulationStateName.Finished:
+					break;
+				case EmulationStateName.InAction:
+				case EmulationStateName.Paused:
+					state.Change(EmulationStateName.PendedToRestart, false);
+					if (state.Paused)
+						Continue();
+					while (IsBusy) ;
+					break;
+				default:
+					return false;
+			}
+			
+			StatusMonitor = new StatusMonitor();
+			state.Change(EmulationStateName.NotInitialized, false);
+			Prepare(true);
+			return true;
+		}
+		
+		public bool Init()
+		{
+			if (IsBusy || state.Pending || state.Name != EmulationStateName.NotInitialized)
+				return false;
+			RunWorkerAsync(true);
+			return true;
+		}
+
+		public bool Start()
+		{
+			if (IsBusy || state.Pending ||
+			    state.Name != EmulationStateName.Initialized &&
+			    state.Name != EmulationStateName.Finished)
+				return false;
+			RunWorkerAsync(false);
+			return true;
+		}
+
+		protected override void OnDoWork(DoWorkEventArgs e)
+		{
+			if ((bool) e.Argument)
+				Prepare(true);
+			else
+				Run();
+		}
+
+		private void Prepare(bool init = false)
+		{
+			if (init)
+				Bots = generationBuilder.CreateInitial();
+			Map = mapProvider.GetMap();
+			mapFiller.FillItems(Map);
+			mapFiller.FillBots(Map, Bots);
+
+			if (init)
+				state.Change(EmulationStateName.Initialized);
+		}
+
+		private void Run()
+		{
+			state.Change(EmulationStateName.InAction);
+			while (StatusMonitor.GenerationIterationNumber < Config.GenIterationsCountGoal)
 			{
 				StatusMonitor.GenerationIterationNumber = 0;
-				Map = mapProvider.GetMap();
-				mapFiller.FillItems(Map);
-				mapFiller.FillBots(Map, Bots);
 				StatusMonitor.GenerationNumber++;
 				RunGeneration();
+				if (state.Name == EmulationStateName.PendedToRestart)
+					return;
 				var survivedBots = Bots.Where(bot => !bot.IsDead).ToArray();
 				StatusMonitor.SurvivedBots = survivedBots;
 				Bots = generationBuilder.Rebuild(survivedBots);
+				Prepare();
 			}
+			state.Change(EmulationStateName.Finished);
 		}
 
 		private void RunGeneration()
 		{
-			StatusMonitor.BotsAliveCount = config.GenerationSize;
-			while (StatusMonitor.BotsAliveCount > config.ParentsCount)
+			StatusMonitor.BotsAliveCount = Config.GenerationSize;
+			while (StatusMonitor.BotsAliveCount > Config.ParentsCount)
 			{
-				if (++StatusMonitor.GenerationIterationNumber >= config.GoalGenerationLifeCount)
+				if (++StatusMonitor.GenerationIterationNumber >= Config.GenIterationsCountGoal)
 					break;
 				foreach (var bot in Bots.Where(bot => !bot.IsDead))
 				{
 					PerformBotAction(bot);
-					if (StatusMonitor.BotsAliveCount <= config.ParentsCount)
+					if (state.Name == EmulationStateName.PendedToRestart)
+						return;
+					if (StatusMonitor.BotsAliveCount <= Config.ParentsCount)
 						break;
 				}
 
-				SpawnItem(WorldObjectTypes.Food);
-				SpawnItem(WorldObjectTypes.Poison);
+				SpawnItem(WorldObjectType.Food);
+				SpawnItem(WorldObjectType.Poison);
 				GenIterationPerformed?.Invoke();
-				if (config.DelayType == DelayTypes.PerEachGenIteration)
-					Thread.Sleep(config.IterationDelay);
+				if (Config.DelayType == DelayTypes.PerEachGenIteration)
+					Thread.Sleep(Config.IterationDelay);
 			}
 			StatusMonitor.GenIterationsStatistics.Add(StatusMonitor.GenerationIterationNumber);
 		}
@@ -84,12 +173,16 @@ namespace EmulationModel
 		private void PerformBotAction(Bot bot)
 		{
 			Command command;
-			var commandsExecutedCount = 0;
+			var executedCommandsCount = 0;
 			do
 			{
+				if (HandleEmulationState())
+					return;
+				
 				command = bot.CurrentCommand;
 				command.Execute(bot, Map);
-				if (++commandsExecutedCount < config.GenomeSize) continue;
+				
+				if (++executedCommandsCount < Config.GenomeSize) continue;
 				bot.Health = 0;
 				break;
 			} while (!command.IsFinal);
@@ -97,18 +190,31 @@ namespace EmulationModel
 			bot.Health--;
 			if (!bot.IsDead) 
 				return;
-			Map[bot.Position] = new WorldMapCell(bot.Position, WorldObjectTypes.Empty);
+			Map[bot.Position] = new WorldMapCell(bot.Position, WorldObjectType.Empty);
 			StatusMonitor.BotsAliveCount--;
 		}
 
-		private void SpawnItem(WorldObjectTypes objectType)
+		private bool HandleEmulationState()
+		{
+			if (state.Name == EmulationStateName.PendedToPause)
+			{
+				state.Change(EmulationStateName.Paused);
+				lock (pauseLocker)
+					Monitor.Wait(pauseLocker);
+				state.Change(EmulationStateName.InAction);
+			}
+
+			return state.Name == EmulationStateName.PendedToRestart;
+		}
+
+		private void SpawnItem(WorldObjectType objectType)
 		{
 			iterationsCountSinceLastItemSpawn[objectType]++;
 			var iterationsCount = iterationsCountSinceLastItemSpawn[objectType];
-			if (iterationsCount < config.ItemSpawnIterationDelay[objectType])
+			if (iterationsCount < Config.ItemSpawnIterationDelay[objectType])
 				return;
 			iterationsCountSinceLastItemSpawn[objectType] = 0;
-			if (Map.PlacedObjectsCounts[objectType] >= config.InitialItemCountInMap[objectType])
+			if (Map.PlacedObjectsCounts[objectType] >= Config.InitialItemCountInMap[objectType])
 				return;
 			IWorldMapCell ObjFactory(Point pos) => new WorldMapCell(pos, objectType);
 			mapFiller.PlaceObject(ObjFactory, 1, Map);

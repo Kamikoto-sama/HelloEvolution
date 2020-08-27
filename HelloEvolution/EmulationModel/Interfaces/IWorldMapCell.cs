@@ -5,7 +5,7 @@ namespace EmulationModel.Interfaces
 	public interface IWorldMapCell
 	{
 		Point Position { get; set; }
-		WorldObjectTypes Type { get; }
+		WorldObjectType Type { get; }
 		bool IsBusy { get; set; }
 	}
 }

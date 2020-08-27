@@ -6,10 +6,10 @@ namespace EmulationModel
 	public class WorldMapCell: IWorldMapCell
 	{
 		public Point Position { get; set; }
-		public WorldObjectTypes Type { get; }
+		public WorldObjectType Type { get; }
 		public bool IsBusy { get; set; }
 
-		public WorldMapCell(Point position, WorldObjectTypes type)
+		public WorldMapCell(Point position, WorldObjectType type)
 		{
 			Position = position;
 			Type = type;

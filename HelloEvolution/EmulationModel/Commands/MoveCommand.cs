@@ -16,15 +16,15 @@ namespace EmulationModel.Commands
 			var obj = GetObjByBotDirection(bot.Direction, Direction, bot.Position, map);
 			switch (obj.Type)
 			{
-				case WorldObjectTypes.Poison:
+				case WorldObjectType.Poison:
 					bot.Health = 0;
-					map[obj.Position] = new WorldMapCell(obj.Position, WorldObjectTypes.Empty);
+					map[obj.Position] = new WorldMapCell(obj.Position, WorldObjectType.Empty);
 					break;
-				case WorldObjectTypes.Food:
+				case WorldObjectType.Food:
 					bot.IncreaseHealthByFood();
 					MoveBot(bot, map, obj.Position);
 					break;
-				case WorldObjectTypes.Empty:
+				case WorldObjectType.Empty:
 					MoveBot(bot, map, obj.Position);
 					break;
 			}
@@ -33,7 +33,7 @@ namespace EmulationModel.Commands
 
 		private void MoveBot(Bot bot, WorldMap map, Point newPosition)
 		{
-			map[bot.Position] = new WorldMapCell(bot.Position, WorldObjectTypes.Empty);
+			map[bot.Position] = new WorldMapCell(bot.Position, WorldObjectType.Empty);
 			map[newPosition] = bot;
 			bot.Position = newPosition;
 		}

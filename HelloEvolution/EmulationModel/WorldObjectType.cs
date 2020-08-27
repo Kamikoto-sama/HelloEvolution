@@ -1,6 +1,6 @@
 ﻿namespace EmulationModel
 {
-	public enum WorldObjectTypes
+	public enum WorldObjectType
 	{
 		Poison = 1,
 		Wall = 2,

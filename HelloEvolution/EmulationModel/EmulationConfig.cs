@@ -8,33 +8,31 @@ namespace EmulationModel
 	{
 		public int GenerationSize { get; set; } = 64;
 		public int ParentsCount { get; set; } = 8;
-		public int MutationsCount { get; set; } = 8;
-		public int EachParentCopiesCount { get; set; } = 7;
+		public int MutatedBotsCount { get; set; } = 8;
 		public int GenomeSize { get; set; } = 64;
 		public Range MutatedGenesCount { get; set; } = new Range(2, 8);
 
 		public int BotInitialHealth { get; set; } = 35;
-		public Directions BotInitialDirection { get; set; } = Directions.Up;
 		public int BotMaxHealth { get; set; } = 90;
 		public int FoodHealthIncrease { get; set; } = 10;
 
 		public string TxtMapFilePath { get; set; } = "src/map.txt";
-		public Dictionary<WorldObjectTypes, int> InitialItemCountInMap { get; } =
-			new Dictionary<WorldObjectTypes, int>
+		public Dictionary<WorldObjectType, int> InitialItemCountInMap { get; } =
+			new Dictionary<WorldObjectType, int>
 			{
-				{WorldObjectTypes.Food, 50},
-				{WorldObjectTypes.Poison, 50},
+				{WorldObjectType.Food, 50},
+				{WorldObjectType.Poison, 50},
 			};
-		public Dictionary<WorldObjectTypes, int> ItemSpawnIterationDelay { get; } =
-			new Dictionary<WorldObjectTypes, int>
+		public Dictionary<WorldObjectType, int> ItemSpawnIterationDelay { get; } =
+			new Dictionary<WorldObjectType, int>
 			{
-				{WorldObjectTypes.Food, 5},
-				{WorldObjectTypes.Poison, 5},
+				{WorldObjectType.Food, 5},
+				{WorldObjectType.Poison, 5},
 			};
 
-		public int GoalGenerationLifeCount { get; set; } = 200000;
+		public int GenIterationsCountGoal { get; set; } = 200000;
 		public DelayTypes DelayType { get; set; } = DelayTypes.NoDelay;
-		public TimeSpan IterationDelay { get; set; } = TimeSpan.FromMilliseconds(500);
+		public TimeSpan IterationDelay { get; set; } = TimeSpan.FromMilliseconds(1000);
 
 		public EmulationConfig()
 		{
@@ -43,11 +41,12 @@ namespace EmulationModel
 
 		private void ValidateParams()
 		{
-			if (ParentsCount * EachParentCopiesCount + MutationsCount != GenerationSize)
-			{
-				var message = "ParentsCount * EachParentCopiesCount + MutationsCount != GenerationSize";
-				throw new InvalidDataException(message);
-			}
+			if (ParentsCount > GenerationSize)
+				throw new InvalidDataException("Parents count can't be greater than generation size");
+			if (MutatedBotsCount > GenerationSize)
+				throw new InvalidDataException("Mutated bots count can't be greater than generation size");
+			if (GenerationSize % ParentsCount != 0)
+				throw new InvalidDataException("GenerationSize % ParentsCount != 0");
 
 			if (MutatedGenesCount.End.Value < MutatedGenesCount.Start.Value)
 			{

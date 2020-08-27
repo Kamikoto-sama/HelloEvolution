@@ -17,10 +17,10 @@ namespace EmulationModel
 		
 		public void FillItems(WorldMap map)
 		{
-			IWorldMapCell foodFactory(Point pos) => new WorldMapCell(pos, WorldObjectTypes.Food);
-			PlaceObject(foodFactory, config.InitialItemCountInMap[WorldObjectTypes.Food], map);
-			IWorldMapCell poisonFactory(Point pos) => new WorldMapCell(pos, WorldObjectTypes.Poison);
-			PlaceObject(poisonFactory, config.InitialItemCountInMap[WorldObjectTypes.Poison], map);
+			IWorldMapCell foodFactory(Point pos) => new WorldMapCell(pos, WorldObjectType.Food);
+			PlaceObject(foodFactory, config.InitialItemCountInMap[WorldObjectType.Food], map);
+			IWorldMapCell poisonFactory(Point pos) => new WorldMapCell(pos, WorldObjectType.Poison);
+			PlaceObject(poisonFactory, config.InitialItemCountInMap[WorldObjectType.Poison], map);
 		}
 
 		public void FillBots(WorldMap map, IEnumerable<Bot> bots)
@@ -37,7 +37,7 @@ namespace EmulationModel
 		{
 			foreach (var bot in objects)
 			{
-				var emptyObj = new WorldMapCell(bot.Position, WorldObjectTypes.Empty);
+				var emptyObj = new WorldMapCell(bot.Position, WorldObjectType.Empty);
 				map[bot.Position.X, bot.Position.Y] = emptyObj;
 			}
 		}
@@ -45,7 +45,7 @@ namespace EmulationModel
 		public void PlaceObject(Func<Point, IWorldMapCell> objFactory, int count, WorldMap map)
 		{
 			var emptyCells = map.EmptyCells;
-			var emptyCellsCount = map.PlacedObjectsCounts[WorldObjectTypes.Empty];
+			var emptyCellsCount = map.PlacedObjectsCounts[WorldObjectType.Empty];
 			if (emptyCellsCount < count)
 				throw new Exception($"Not enough cells on the map to place {count} objs");
 			foreach (var (position, _) in emptyCells.Take(count))

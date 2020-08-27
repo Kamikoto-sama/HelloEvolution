@@ -30,7 +30,7 @@ namespace EmulationModel.Commands
 			botPosition.Offset(resultDirection);
 			return map.InBounds(botPosition) 
 				? map[botPosition] 
-				: new WorldMapCell(botPosition, WorldObjectTypes.Wall);
+				: new WorldMapCell(botPosition, WorldObjectType.Wall);
 		}
 	}
 }

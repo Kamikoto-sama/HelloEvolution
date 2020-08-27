@@ -10,7 +10,7 @@ namespace EmulationModel
 		private readonly EmulationConfig config;
 		public IReadOnlyList<Command> Genome { get; }
 		public Point Position { get; set; }
-		public WorldObjectTypes Type { get; } = WorldObjectTypes.Bot;
+		public WorldObjectType Type { get; } = WorldObjectType.Bot;
 		public bool IsBusy { get; set; }
 		public Directions Direction { get; set; }
 		public int Health { get; set; }
@@ -25,7 +25,6 @@ namespace EmulationModel
 			Genome = genome;
 			GenerationNumber = generationNumber;
 			Health = config.BotInitialHealth;
-			Direction = config.BotInitialDirection;
 		}
 
 		public void MoveCommandPointer(int offsetValue) => 

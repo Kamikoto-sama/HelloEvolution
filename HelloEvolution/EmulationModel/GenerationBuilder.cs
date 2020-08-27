@@ -27,13 +27,14 @@ namespace EmulationModel
 		{
 			var mutationsCount = 0;
 			return survivedBots
+				.Take(config.ParentsCount)
 				.SelectMany(parent => Enumerable
-					.Range(0, config.EachParentCopiesCount)
+					.Range(0, config.GenerationSize / config.ParentsCount)
 					.Select(_ =>
 					{
 						var genome = parent.Genome;
 						var generationNumber = parent.GenerationNumber + 1;
-						if (mutationsCount++ < config.MutationsCount)
+						if (mutationsCount++ < config.MutatedBotsCount)
 						{
 							genome = genomeBuilder.MutateGenome(genome);
 							generationNumber = 1;
