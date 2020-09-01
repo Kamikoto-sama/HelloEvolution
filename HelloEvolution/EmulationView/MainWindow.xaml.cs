@@ -1,17 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using EmulationModel;
+using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
+using Point = System.Drawing.Point;
 
 namespace EmulationView
 {
@@ -20,13 +16,135 @@ namespace EmulationView
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private readonly Emulation emulation;
+		private bool initialized;
+		private bool paused;
+		private const int CellSize = 25;
+
 		public MainWindow()
 		{
 			InitializeComponent();
+			emulation = (Emulation) Application.Current.Resources["emulation"];
+			emulation.Config.IterationDelay = TimeSpan.FromSeconds(0.5);
+			emulation.StateChanged += state => Dispatcher.Invoke(() => OnEmulationStateChanged(state));
+			emulation.GenIterationPerformed += () => Dispatcher.Invoke(RenderWorldMap);
+			emulation.RunWorkerCompleted += (_, args) =>
+			{
+				if (args.Error != null)
+					MessageBox.Show(args.Error.Message);
+			};
 		}
 
-        private void PrepareEmulation(object sender, RoutedEventArgs e)
+		private void InitEmulation(object sender, RoutedEventArgs e) => emulation.Init();
+
+        private void OnEmulationStateChanged(EmulationStateName state)
         {
+	        switch (state)
+	        {
+		        case EmulationStateName.Initialized when initialized:
+		        case EmulationStateName.Initialized:
+			        initialized = true;
+			        MainGrid.Children.Remove(InitEmulationBtn);
+			        InitMap();
+			        AdjustToContent();
+			        RenderWorldMap();
+			        break;
+	        }
+	        Title = $"Main window - {state}";
+        }
+
+        private void InitMap()
+        {
+	        var columnsCount = emulation.Map.Width;
+	        var rowsCount = emulation.Map.Height;
+
+	        for (var i = 0; i < columnsCount; i++)
+				MainGrid.ColumnDefinitions.Add(new ColumnDefinition{MinWidth = CellSize});
+	        for (var i = 0; i < rowsCount; i++)
+		        MainGrid.RowDefinitions.Add(new RowDefinition{MinHeight = CellSize});
+        }
+
+        private void AdjustToContent()
+        {
+	        var screenHeight = SystemParameters.PrimaryScreenHeight;
+	        var screenWidth = SystemParameters.PrimaryScreenWidth;
+	        var girdSize = MainGrid.RenderSize;
+	        if (girdSize.Width > screenWidth || girdSize.Height > screenHeight)
+		        WindowState = WindowState.Maximized;
+	        else
+	        {
+		        SizeToContent = SizeToContent.WidthAndHeight;
+		        SizeToContent = SizeToContent.Manual;
+	        }
+        }
+
+        private void AdjustToContent_Click(object sender, RoutedEventArgs e) => AdjustToContent();
+
+        private void RenderWorldMap()
+        {
+	        MainGrid.Children.Clear();
+	        foreach (var (position, cell) in emulation.Map)
+	        {
+		        var worldObjView = GetWorldObjView(cell);
+		        MainGrid.Children.Add(worldObjView);
+		        Grid.SetColumn(worldObjView, position.X);
+		        Grid.SetRow(worldObjView, position.Y);
+	        }
+        }
+
+        private UIElement GetWorldObjView(IWorldMapObject cell)
+        {
+	        var objView = new Button();
+	        switch (cell.Type)
+	        {
+		        case WorldObjectType.Poison:
+			        objView.Background = Brushes.DarkRed;
+			        break;
+		        case WorldObjectType.Wall:
+			        objView.Background = Brushes.DarkGray;
+			        break;
+		        case WorldObjectType.Bot:
+			        var bot = (Bot) cell;
+			        objView.Background = Brushes.BlueViolet;
+			        objView.Content = bot.Health;
+			        objView.Click += (sender, _) =>
+			        {
+				        var button = (Button) sender;
+				        MessageBox.Show($"Bot at {Grid.GetColumn(button)};{Grid.GetRow(button)}");
+			        };
+			        break;
+		        case WorldObjectType.Food:
+			        objView.Background = Brushes.Green;
+			        break;
+		        case WorldObjectType.Empty:
+			        objView.Background = Brushes.Black;
+			        break;
+	        }
+
+	        return objView;
+        }
+
+        private void StartEmulation_Click(object sender, RoutedEventArgs e)
+        {
+	        emulation.Start();
+	        ((MenuItem) sender).IsEnabled = false;
+        }
+
+        private void PauseEmulation_Click(object sender, RoutedEventArgs e)
+        {
+	        var menuItem = (MenuItem) sender;
+	        if (paused)
+	        {
+		        emulation.Continue();
+		        menuItem.Header = "Pause emulation";
+		        paused = false;
+	        }
+	        else
+	        {
+		        emulation.Pause();
+		        menuItem.Header = "Continue emulation";
+		        paused = true;
+	        }
         }
 	}
 }

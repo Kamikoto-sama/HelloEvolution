@@ -10,4 +10,10 @@
       <ProjectReference Include="..\EmulationModel\EmulationModel.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="src\map.txt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

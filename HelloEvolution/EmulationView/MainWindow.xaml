@@ -5,14 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:EmulationView"
         mc:Ignorable="d"
-        Title="Main window" 
-        Height="300" Width="300" 
-        WindowStartupLocation="CenterScreen">
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-        <Grid>
-            <Button x:Name="PrepareEmulationBtn" Content="Prepare emulation" 
-                    FontSize="30" Margin="40 100" 
-                    Click="PrepareEmulation" Cursor="Hand"/>
-        </Grid>
-    </ScrollViewer>
+        Title="Main window"
+        Width="500" Height="400">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" HorizontalAlignment="Center" Cursor="Hand">
+            <MenuItem Header="Adjust to content" Click="AdjustToContent_Click"></MenuItem>
+            <MenuItem Header="Start emulation" Click="StartEmulation_Click"></MenuItem>
+            <MenuItem Header="Pause emulation" Click="PauseEmulation_Click"></MenuItem>
+        </Menu>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <Grid x:Name="MainGrid" ShowGridLines="False" Background="Black">
+                <Button x:Name="InitEmulationBtn" Content="Init emulation"
+                        FontSize="30"
+                        Click="InitEmulation" Cursor="Hand" />
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
