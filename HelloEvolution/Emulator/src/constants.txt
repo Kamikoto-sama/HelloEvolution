@@ -1,0 +1,2 @@
+Food count = 50
+Poison count = 50
