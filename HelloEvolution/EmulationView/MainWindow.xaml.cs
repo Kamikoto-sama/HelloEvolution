@@ -25,7 +25,7 @@ namespace EmulationView
 		{
 			InitializeComponent();
 			emulation = (Emulation) Application.Current.Resources["emulation"];
-			emulation.Config.IterationDelay = TimeSpan.FromSeconds(0.5);
+			emulation.Config.IterationDelay = TimeSpan.FromMilliseconds(100);
 			emulation.StateChanged += state => Dispatcher.Invoke(() => OnEmulationStateChanged(state));
 			emulation.GenIterationPerformed += () => Dispatcher.Invoke(RenderWorldMap);
 			emulation.RunWorkerCompleted += (_, args) =>
@@ -94,30 +94,36 @@ namespace EmulationView
 
         private UIElement GetWorldObjView(IWorldMapObject cell)
         {
-	        var objView = new Button();
+	        UIElement objView = new Border
+	        {
+		        BorderBrush = Brushes.Gray,
+		        BorderThickness = new Thickness(1)
+	        };
 	        switch (cell.Type)
 	        {
 		        case WorldObjectType.Poison:
-			        objView.Background = Brushes.DarkRed;
+			        ((Border) objView).Background = Brushes.DarkRed;
 			        break;
 		        case WorldObjectType.Wall:
-			        objView.Background = Brushes.DarkGray;
+			        ((Border) objView).Background = Brushes.DarkGray;
 			        break;
 		        case WorldObjectType.Bot:
 			        var bot = (Bot) cell;
-			        objView.Background = Brushes.BlueViolet;
-			        objView.Content = bot.Health;
-			        objView.Click += (sender, _) =>
+			        var button = new Button();
+			        button.Background = Brushes.BlueViolet;
+			        button.Content = bot.Health;
+			        button.Click += (sender, _) =>
 			        {
-				        var button = (Button) sender;
-				        MessageBox.Show($"Bot at {Grid.GetColumn(button)};{Grid.GetRow(button)}");
+				        var btn = (Button) sender;
+				        MessageBox.Show($"Bot at {Grid.GetColumn(btn)};{Grid.GetRow(btn)}");
 			        };
+			        objView = button;
 			        break;
 		        case WorldObjectType.Food:
-			        objView.Background = Brushes.Green;
+			        ((Border) objView).Background = Brushes.Green;
 			        break;
 		        case WorldObjectType.Empty:
-			        objView.Background = Brushes.Black;
+			        ((Border) objView).Background = Brushes.Black;
 			        break;
 	        }
 
