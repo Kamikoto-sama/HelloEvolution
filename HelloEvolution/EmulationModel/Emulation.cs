@@ -7,6 +7,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using EmulationModel.Commands;
 using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel
 {
@@ -28,7 +30,7 @@ namespace EmulationModel
 		public event Action<EmulationStateName> StateChanged;
 		public event Action GenIterationPerformed;
 
-		public Emulation(IWorldMapProvider mapProvider, 
+		public Emulation(IWorldMapProvider mapProvider,
 						IWorldMapFiller mapFiller,
 						IGenerationBuilder generationBuilder,
 						EmulationConfig config)
@@ -39,7 +41,7 @@ namespace EmulationModel
 			this.mapProvider = mapProvider;
 			this.mapFiller = mapFiller;
 			this.generationBuilder = generationBuilder;
-			this.Config = config;
+			Config = config;
 			iterationsCountSinceLastItemSpawn = new Dictionary<WorldObjectType, int>
 			{
 				{WorldObjectType.Food, 0},
@@ -82,13 +84,13 @@ namespace EmulationModel
 				default:
 					return false;
 			}
-			
+
 			StatusMonitor = new StatusMonitor();
 			state.Change(EmulationStateName.NotInitialized, false);
 			Prepare(true);
 			return true;
 		}
-		
+
 		public bool Init()
 		{
 			if (IsBusy || state.Pending || state.Name != EmulationStateName.NotInitialized)
@@ -178,19 +180,19 @@ namespace EmulationModel
 			{
 				if (HandleEmulationState())
 					return;
-				
+
 				command = bot.CurrentCommand;
 				command.Execute(bot, Map);
-				
+
 				if (++executedCommandsCount < Config.GenomeSize) continue;
 				bot.Health = 0;
 				break;
 			} while (!command.IsFinal);
-					
+
 			bot.Health--;
-			if (!bot.IsDead) 
+			if (!bot.IsDead)
 				return;
-			Map[bot.Position] = new WorldMapCell(bot.Position, WorldObjectType.Empty);
+			Map[bot.Position] = new Empty(bot.Position);
 			StatusMonitor.BotsAliveCount--;
 		}
 
@@ -216,7 +218,7 @@ namespace EmulationModel
 			iterationsCountSinceLastItemSpawn[objectType] = 0;
 			if (Map.PlacedObjectsCounts[objectType] >= Config.InitialItemCountInMap[objectType])
 				return;
-			IWorldMapCell ObjFactory(Point pos) => new WorldMapCell(pos, objectType);
+			IWorldMapObject ObjFactory(Point pos) => WorldObjFactory.GetWorldObj(objectType, pos);
 			mapFiller.PlaceObject(ObjFactory, 1, Map);
 		}
 	}

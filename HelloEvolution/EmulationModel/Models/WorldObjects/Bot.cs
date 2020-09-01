@@ -3,9 +3,9 @@ using System.Drawing;
 using EmulationModel.Commands;
 using EmulationModel.Interfaces;
 
-namespace EmulationModel
+namespace EmulationModel.Models.WorldObjects
 {
-	public class Bot: IWorldMapCell
+	public class Bot: IWorldMapObject
 	{
 		private readonly EmulationConfig config;
 		public IReadOnlyList<Command> Genome { get; }

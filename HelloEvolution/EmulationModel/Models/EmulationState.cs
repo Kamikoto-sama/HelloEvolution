@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace EmulationModel
+namespace EmulationModel.Models
 {
 	public class EmulationState
 	{

@@ -1,4 +1,4 @@
-﻿namespace EmulationModel
+﻿namespace EmulationModel.Models.WorldObjects
 {
 	public enum WorldObjectType
 	{

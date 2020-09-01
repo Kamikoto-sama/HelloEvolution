@@ -4,25 +4,27 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
-namespace EmulationModel
+namespace EmulationModel.DefaultImplementations
 {
-	public class TxtMapProvider: IWorldMapProvider
+	public class DefaultMapProvider: IWorldMapProvider
 	{
 		private readonly EmulationConfig config;
-		
-		public TxtMapProvider(EmulationConfig config)
+
+		public DefaultMapProvider(EmulationConfig config)
 		{
 			this.config = config;
 		}
-		
+
 		public WorldMap GetMap()
 		{
 			var mapLines = File.ReadAllLines(config.TxtMapFilePath);
 			if (mapLines.Length == 0)
 				throw new InvalidDataException($"File {config.TxtMapFilePath} is empty");
 			var mapSize = mapLines.First().Split(new[] {' ', 'x'}, StringSplitOptions.RemoveEmptyEntries);
-			if (mapSize.Length != 2 || 
+			if (mapSize.Length != 2 ||
 			    !int.TryParse(mapSize[0], out var mapWidth) ||
 			    !int.TryParse(mapSize[1], out var mapHeight))
 				throw new InvalidDataException($"Invalid map size format in {config.TxtMapFilePath}");
@@ -39,16 +41,18 @@ namespace EmulationModel
 				for (var colIndex = 0; colIndex < mapWidth; colIndex++)
 				{
 					var objPosition = new Point(colIndex, rowIndex);
-					WorldObjectType objType;
+					IWorldMapObject worldObj;
 					try
 					{
-						objType = mapRow[colIndex] == '#' ? WorldObjectType.Wall : WorldObjectType.Empty;
+						worldObj = mapRow[colIndex] == '#'
+							? (IWorldMapObject) new Wall(objPosition)
+							: new Empty(objPosition);
 					}
 					catch (IndexOutOfRangeException)
 					{
 						throw new InvalidDataException("Map size doesnt match map schema");
 					}
-					map[colIndex, rowIndex] = new WorldMapCell(objPosition, objType);
+					map[colIndex, rowIndex] = worldObj;
 				}
 				rowIndex++;
 			}

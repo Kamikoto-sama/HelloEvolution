@@ -1,11 +1,11 @@
 ﻿using System.Drawing;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel.Interfaces
 {
-	public interface IWorldMapCell
+	public interface IWorldMapObject
 	{
-		Point Position { get; set; }
+		Point Position { get; }
 		WorldObjectType Type { get; }
-		bool IsBusy { get; set; }
 	}
 }

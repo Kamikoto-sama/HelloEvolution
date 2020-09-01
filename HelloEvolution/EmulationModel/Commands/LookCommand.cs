@@ -1,4 +1,6 @@
 ﻿using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel.Commands
 {

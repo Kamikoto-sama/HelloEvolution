@@ -1,4 +1,6 @@
-﻿namespace EmulationModel.Interfaces
+﻿using EmulationModel.Models;
+
+namespace EmulationModel.Interfaces
 {
 	public interface IWorldMapProvider
 	{

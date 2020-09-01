@@ -4,16 +4,16 @@ using System.Linq;
 using EmulationModel.Commands;
 using EmulationModel.Interfaces;
 
-namespace EmulationModel
+namespace EmulationModel.DefaultImplementations
 {
-	public class CommandsCollection: ICommandsCollection
+	public class DefaultCommandsCollection: ICommandsCollection
 	{
 		private readonly ICommandFactory[] availableCommands;
 		public int CommandsCount { get; private set; }
 		public int TotalSubtypesCount { get; private set; }
 		public ICommandFactory this[int index] => availableCommands[index];
 
-		public CommandsCollection(IEnumerable<ICommandFactory> availableCommands)
+		public DefaultCommandsCollection(IEnumerable<ICommandFactory> availableCommands)
 		{
 			CommandsCount = 0;
 			TotalSubtypesCount = 0;
@@ -26,7 +26,7 @@ namespace EmulationModel
 				})
 				.ToArray();
 		}
-		
+
 		public Command GetCommandBySubtypeIndex(int index)
 		{
 			var currentSubtypesCount = 0;

@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
-namespace EmulationModel
+namespace EmulationModel.DefaultImplementations
 {
-	public class MapFiller: IWorldMapFiller
+	public class DefaultMapFiller: IWorldMapFiller
 	{
 		private readonly EmulationConfig config;
 
-		public MapFiller(EmulationConfig config)
+		public DefaultMapFiller(EmulationConfig config)
 		{
 			this.config = config;
 		}
-		
+
 		public void FillItems(WorldMap map)
 		{
-			IWorldMapCell foodFactory(Point pos) => new WorldMapCell(pos, WorldObjectType.Food);
+			IWorldMapObject foodFactory(Point pos) => new Food(pos);
 			PlaceObject(foodFactory, config.InitialItemCountInMap[WorldObjectType.Food], map);
-			IWorldMapCell poisonFactory(Point pos) => new WorldMapCell(pos, WorldObjectType.Poison);
+			IWorldMapObject poisonFactory(Point pos) => new Poison(pos);
 			PlaceObject(poisonFactory, config.InitialItemCountInMap[WorldObjectType.Poison], map);
 		}
 
@@ -33,16 +35,7 @@ namespace EmulationModel
 				}, 1, map);
 		}
 
-		public void RemoveObjectsFromMap(IEnumerable<IWorldMapCell> objects, WorldMap map)
-		{
-			foreach (var bot in objects)
-			{
-				var emptyObj = new WorldMapCell(bot.Position, WorldObjectType.Empty);
-				map[bot.Position.X, bot.Position.Y] = emptyObj;
-			}
-		}
-
-		public void PlaceObject(Func<Point, IWorldMapCell> objFactory, int count, WorldMap map)
+		public void PlaceObject(Func<Point, IWorldMapObject> objFactory, int count, WorldMap map)
 		{
 			var emptyCells = map.EmptyCells;
 			var emptyCellsCount = map.PlacedObjectsCounts[WorldObjectType.Empty];

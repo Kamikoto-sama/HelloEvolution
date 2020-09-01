@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
 using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel.Commands
 {
@@ -10,17 +12,17 @@ namespace EmulationModel.Commands
 
 		private static readonly Point[] DirectionsOffsets =
 		{
-			new Point(0, -1), 
-			new Point(1, -1), 
-			new Point(1, 0), 
-			new Point(1, 1), 
-			new Point(0, 1), 
-			new Point(-1, 1), 
-			new Point(-1, 0), 
-			new Point(-1, -1), 
+			new Point(0, -1),
+			new Point(1, -1),
+			new Point(1, 0),
+			new Point(1, 1),
+			new Point(0, 1),
+			new Point(-1, 1),
+			new Point(-1, 0),
+			new Point(-1, -1),
 		};
-		
-		protected static IWorldMapCell GetObjByBotDirection(Directions botDirection, 
+
+		protected static IWorldMapObject GetObjByBotDirection(Directions botDirection,
 			Directions actionDirection, Point botPosition, WorldMap map)
 		{
 			var botDirectionIndex = (int) botDirection;
@@ -28,9 +30,9 @@ namespace EmulationModel.Commands
 			var resultDirectionIndex = (botDirectionIndex + actionDirectionIndex) % DirectionsOffsets.Length;
 			var resultDirection = DirectionsOffsets[resultDirectionIndex];
 			botPosition.Offset(resultDirection);
-			return map.InBounds(botPosition) 
-				? map[botPosition] 
-				: new WorldMapCell(botPosition, WorldObjectType.Wall);
+			return map.InBounds(botPosition)
+				? map[botPosition]
+				: new Wall(botPosition);
 		}
 	}
 }

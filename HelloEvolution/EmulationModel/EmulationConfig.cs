@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel
 {
@@ -31,7 +33,7 @@ namespace EmulationModel
 			};
 
 		public int GenIterationsCountGoal { get; set; } = 200000;
-		public DelayTypes DelayType { get; set; } = DelayTypes.NoDelay;
+		public DelayTypes DelayType { get; set; } = DelayTypes.PerEachGenIteration;
 		public TimeSpan IterationDelay { get; set; } = TimeSpan.FromMilliseconds(1000);
 
 		public EmulationConfig()

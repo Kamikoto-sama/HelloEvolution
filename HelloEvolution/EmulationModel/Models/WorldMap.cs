@@ -1,52 +1,53 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using EmulationModel.Interfaces;
+using EmulationModel.Models.WorldObjects;
 
-namespace EmulationModel
+namespace EmulationModel.Models
 {
-	public class WorldMap
+	public class WorldMap : IEnumerable<KeyValuePair<Point, IWorldMapObject>>
 	{
 		public int Width { get; }
 		public int Height { get; }
-		private readonly ConcurrentDictionary<Point, IWorldMapCell> objects;
-		public ConcurrentDictionary<WorldObjectType, int> PlacedObjectsCounts { get; }
-		public ConcurrentDictionary<Point, IWorldMapCell> EmptyCells { get; }
+		private readonly ConcurrentDictionary<Point, IWorldMapObject> objects;
+		internal ConcurrentDictionary<WorldObjectType, int> PlacedObjectsCounts { get; }
+		internal ConcurrentDictionary<Point, IWorldMapObject> EmptyCells { get; }
 
-		public event Action<WorldMapChangedEvent> CellChanged;
+		public event Action<WorldMapCellChangedEventArgs> CellChanged;
 
 		public WorldMap(int width, int height)
 		{
 			Width = width;
 			Height = height;
-			objects = new ConcurrentDictionary<Point, IWorldMapCell>();
+			objects = new ConcurrentDictionary<Point, IWorldMapObject>();
 			PlacedObjectsCounts = new ConcurrentDictionary<WorldObjectType, int>();
-			EmptyCells = new ConcurrentDictionary<Point, IWorldMapCell>();
+			EmptyCells = new ConcurrentDictionary<Point, IWorldMapObject>();
 		}
 
-		public IWorldMapCell this[Point coordinates]
+		public IWorldMapObject this[Point coordinates]
 		{
 			get => objects[coordinates];
 			set
 			{
 				objects.TryGetValue(coordinates, out var prevObj);
 				objects[coordinates] = value;
-				var eventArgs = new WorldMapChangedEvent(coordinates, prevObj);
+				var eventArgs = new WorldMapCellChangedEventArgs(coordinates, prevObj);
 				if (value.Type != WorldObjectType.Wall)
 					SaveReplacedObject(prevObj, value);
 				CellChanged?.Invoke(eventArgs);
 			}
 		}
 
-		public IWorldMapCell this[int x, int y]
+		public IWorldMapObject this[int x, int y]
 		{
 			get => this[new Point(x, y)];
 			set => this[new Point(x, y)] = value;
 		}
 
-		private void SaveReplacedObject(IWorldMapCell prevObj, IWorldMapCell newObj)
+		private void SaveReplacedObject(IWorldMapObject prevObj, IWorldMapObject newObj)
 		{
 			if (prevObj != null && PlacedObjectsCounts.ContainsKey(prevObj.Type))
 			{
@@ -66,5 +67,9 @@ namespace EmulationModel
 			  point.Y >= Height || point.Y < 0);
 
 		public bool InBounds(int x, int y) => InBounds(new Point(x, y));
+
+		public IEnumerator<KeyValuePair<Point, IWorldMapObject>> GetEnumerator() => objects.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 	}
 }

@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using EmulationModel.Interfaces;
+using EmulationModel.Models.WorldObjects;
 
-namespace EmulationModel
+namespace EmulationModel.DefaultImplementations
 {
-	public class GenerationBuilder: IGenerationBuilder
+	public class DefaultGenerationBuilder: IGenerationBuilder
 	{
 		private readonly EmulationConfig config;
 		private readonly IGenomeBuilder genomeBuilder;
-		
-		public GenerationBuilder(EmulationConfig config, IGenomeBuilder genomeBuilder)
+
+		public DefaultGenerationBuilder(EmulationConfig config, IGenomeBuilder genomeBuilder)
 		{
 			this.config = config;
 			this.genomeBuilder = genomeBuilder;
 		}
-		
+
 		public ICollection<Bot> CreateInitial()
 		{
 			return Enumerable

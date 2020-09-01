@@ -1,4 +1,6 @@
-﻿namespace EmulationModel.Commands
+﻿using EmulationModel.Models;
+
+namespace EmulationModel.Commands
 {
 	public abstract class DirectionalCommand: Command
 	{

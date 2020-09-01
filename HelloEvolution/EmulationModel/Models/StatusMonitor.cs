@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using EmulationModel.Models.WorldObjects;
 
-namespace EmulationModel
+namespace EmulationModel.Models
 {
 	public class StatusMonitor
 	{

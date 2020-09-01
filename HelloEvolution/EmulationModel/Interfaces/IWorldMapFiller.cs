@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel.Interfaces
 {
@@ -8,7 +10,6 @@ namespace EmulationModel.Interfaces
 	{
 		void FillItems(WorldMap map);
 		void FillBots(WorldMap map, IEnumerable<Bot> bots);
-		void RemoveObjectsFromMap(IEnumerable<IWorldMapCell> objects, WorldMap map);
-		void PlaceObject(Func<Point, IWorldMapCell> objFactory, int count, WorldMap map);
+		void PlaceObject(Func<Point, IWorldMapObject> objFactory, int count, WorldMap map);
 	}
 }

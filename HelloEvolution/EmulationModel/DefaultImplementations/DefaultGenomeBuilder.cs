@@ -4,19 +4,19 @@ using System.Linq;
 using EmulationModel.Commands;
 using EmulationModel.Interfaces;
 
-namespace EmulationModel
+namespace EmulationModel.DefaultImplementations
 {
-	public class GenomeBuilder: IGenomeBuilder
+	public class DefaultGenomeBuilder: IGenomeBuilder
 	{
 		private readonly ICommandsCollection availableCommands;
 		private readonly EmulationConfig config;
 
-		public GenomeBuilder(ICommandsCollection availableCommands, EmulationConfig config)
+		public DefaultGenomeBuilder(ICommandsCollection availableCommands, EmulationConfig config)
 		{
 			this.availableCommands = availableCommands;
 			this.config = config;
 		}
-		
+
 		public IReadOnlyList<Command> Build() =>
 			Enumerable
 				.Range(0, config.GenomeSize)
@@ -32,7 +32,7 @@ namespace EmulationModel
 				.Range(0, mutationsRange.End.Value)
 				.Select(_ => random.Next(0, genesCountToMutate)));
 			return genome
-				.Select((gene, index) => 
+				.Select((gene, index) =>
 					genesIndexes.Contains(index) ? GetRandomSubtypeCommand() : gene)
 				.ToArray();
 		}

@@ -1,4 +1,6 @@
 ﻿using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel.Commands
 {
@@ -9,7 +11,7 @@ namespace EmulationModel.Commands
 		public InteractCommand(int directionIndex): base(directionIndex)
 		{
 		}
-		
+
 		public override void Execute(Bot bot, WorldMap map)
 		{
 			var lookingObj = GetObjByBotDirection(bot.Direction, Direction, bot.Position, map);
@@ -17,15 +19,16 @@ namespace EmulationModel.Commands
 			{
 				case WorldObjectType.Food:
 					bot.IncreaseHealthByFood();
+					map[lookingObj.Position] = new Empty(lookingObj.Position);
 					break;
 				case WorldObjectType.Poison:
-					map[lookingObj.Position] = new WorldMapCell(lookingObj.Position, WorldObjectType.Food);
+					map[lookingObj.Position] = new Food(lookingObj.Position);
 					break;
 			}
 			bot.MoveCommandPointer((int) lookingObj.Type);
 		}
 	}
-	
+
 	public class InteractCommandFactory: ICommandFactory
 	{
 		public int SubtypesCount { get; } = 8;

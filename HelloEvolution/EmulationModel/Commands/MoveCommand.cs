@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
 using EmulationModel.Interfaces;
+using EmulationModel.Models;
+using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel.Commands
 {
@@ -18,7 +20,7 @@ namespace EmulationModel.Commands
 			{
 				case WorldObjectType.Poison:
 					bot.Health = 0;
-					map[obj.Position] = new WorldMapCell(obj.Position, WorldObjectType.Empty);
+					map[obj.Position] = new Empty(obj.Position);
 					break;
 				case WorldObjectType.Food:
 					bot.IncreaseHealthByFood();
@@ -33,16 +35,16 @@ namespace EmulationModel.Commands
 
 		private void MoveBot(Bot bot, WorldMap map, Point newPosition)
 		{
-			map[bot.Position] = new WorldMapCell(bot.Position, WorldObjectType.Empty);
+			map[bot.Position] = new Empty(bot.Position);
 			map[newPosition] = bot;
 			bot.Position = newPosition;
 		}
 	}
-	
+
 	public class MoveCommandFactory: ICommandFactory
 	{
 		public int SubtypesCount { get; } = 8;
-		
+
 		public Command Create(int subTypeIndex) => new MoveCommand(subTypeIndex);
 	}
 }
