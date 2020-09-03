@@ -1,0 +1,28 @@
+﻿<Window x:Class="EmulationView.EmulationConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:EmulationView"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="EmulationConfigWindow"
+        WindowStartupLocation="CenterOwner"
+        Width="450" Height="450">
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Content="Save"/>
+            <Button Grid.Column="1" Content="Close"/>
+        </Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <xctk:PropertyGrid
+                Name="PropertyGrid"
+                Width="Auto"
+                Height="Auto" />
+        </ScrollViewer>
+    </DockPanel>
+</Window>

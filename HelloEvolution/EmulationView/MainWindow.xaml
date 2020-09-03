@@ -14,6 +14,7 @@
                       Click="StartEmulation_Click" IsEnabled="False"></MenuItem>
             <MenuItem Name="PauseEmulationAction" Header="Pause emulation"
                       Click="PauseEmulation_Click" IsEnabled="False"></MenuItem>
+            <MenuItem Header="Configure emulation" Click="ConfigureEmulation_Click"></MenuItem>
         </Menu>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
             <Grid x:Name="MainGrid" Background="Black">

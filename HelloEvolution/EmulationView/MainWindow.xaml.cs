@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,7 +6,6 @@ using EmulationModel;
 using EmulationModel.Interfaces;
 using EmulationModel.Models;
 using EmulationModel.Models.WorldObjects;
-using Point = System.Drawing.Point;
 
 namespace EmulationView
 {
@@ -161,5 +159,8 @@ namespace EmulationView
 		        paused = true;
 	        }
         }
+
+        private void ConfigureEmulation_Click(object sender, RoutedEventArgs e) =>
+	        new EmulationConfigWindow(emulation.Config) {Owner = this}.ShowDialog();
 	}
 }
