@@ -35,19 +35,26 @@ namespace EmulationView
 			};
 		}
 
-		private void InitEmulation(object sender, RoutedEventArgs e) => emulation.Init();
+		private void InitEmulation(object sender, RoutedEventArgs e)
+		{
+			emulation.Init();
+			MainGrid.Children.Remove(InitEmulationBtn);
+		}
 
-        private void OnEmulationStateChanged(EmulationStateName state)
+		private void OnEmulationStateChanged(EmulationStateName state)
         {
 	        switch (state)
 	        {
 		        case EmulationStateName.Initialized when initialized:
 		        case EmulationStateName.Initialized:
 			        initialized = true;
-			        MainGrid.Children.Remove(InitEmulationBtn);
 			        InitMap();
 			        AdjustToContent();
 			        RenderWorldMap();
+			        StartEmulationAction.IsEnabled = true;
+			        break;
+		        case EmulationStateName.InAction:
+			        PauseEmulationAction.IsEnabled = true;
 			        break;
 	        }
 	        Title = $"Main window - {state}";
@@ -114,6 +121,8 @@ namespace EmulationView
 			        button.Content = bot.Health;
 			        button.Click += (sender, _) =>
 			        {
+				        if (!paused)
+					        return;
 				        var btn = (Button) sender;
 				        MessageBox.Show($"Bot at {Grid.GetColumn(btn)};{Grid.GetRow(btn)}");
 			        };
