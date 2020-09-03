@@ -1,4 +1,5 @@
-﻿using EmulationModel.DefaultImplementations;
+﻿using System;
+using EmulationModel.DefaultImplementations;
 using EmulationModel.Interfaces;
 using Ninject;
 using Ninject.Extensions.Conventions;
@@ -21,8 +22,9 @@ namespace EmulationModel
             container.Bind<IGenomeBuilder>().To<DefaultGenomeBuilder>();
             container.Bind<IWorldMapFiller>().To<DefaultMapFiller>();
             container.Bind<IWorldMapProvider>().To<DefaultMapProvider>();
-            container.Bind<EmulationConfig>().ToSelf();
-            container.Bind<Emulation>().ToSelf();
+            container.Bind<EmulationConfig>().ToSelf().InSingletonScope();
+            container.Bind<Emulation>().ToSelf().InSingletonScope();
+            container.Bind<Random>().ToSelf().InTransientScope();
 
             var emulation = container.Get<Emulation>();
             return emulation;

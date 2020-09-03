@@ -14,18 +14,8 @@ namespace EmulationModel.Models
 		public int Height { get; }
 		private readonly ConcurrentDictionary<Point, IWorldMapObject> objects;
 		internal ConcurrentDictionary<WorldObjectType, int> PlacedObjectsCounts { get; }
-		internal ConcurrentDictionary<Point, IWorldMapObject> EmptyCells { get; }
 
 		public event Action<WorldMapCellChangedEventArgs> CellChanged;
-
-		public WorldMap(int width, int height)
-		{
-			Width = width;
-			Height = height;
-			objects = new ConcurrentDictionary<Point, IWorldMapObject>();
-			PlacedObjectsCounts = new ConcurrentDictionary<WorldObjectType, int>();
-			EmptyCells = new ConcurrentDictionary<Point, IWorldMapObject>();
-		}
 
 		public IWorldMapObject this[Point coordinates]
 		{
@@ -47,19 +37,21 @@ namespace EmulationModel.Models
 			set => this[new Point(x, y)] = value;
 		}
 
+		public WorldMap(int width, int height)
+		{
+			Width = width;
+			Height = height;
+			objects = new ConcurrentDictionary<Point, IWorldMapObject>();
+			PlacedObjectsCounts = new ConcurrentDictionary<WorldObjectType, int>();
+		}
+
 		private void SaveReplacedObject(IWorldMapObject prevObj, IWorldMapObject newObj)
 		{
 			if (prevObj != null && PlacedObjectsCounts.ContainsKey(prevObj.Type))
-			{
 				PlacedObjectsCounts[prevObj.Type]--;
-				if (prevObj.Type == WorldObjectType.Empty)
-					EmptyCells.TryRemove(prevObj.Position, out _);
-			}
 			if (!PlacedObjectsCounts.ContainsKey(newObj.Type))
 				PlacedObjectsCounts[newObj.Type] = 0;
 			PlacedObjectsCounts[newObj.Type]++;
-			if (newObj.Type == WorldObjectType.Empty)
-				EmptyCells[newObj.Position] = newObj;
 		}
 
 		public bool InBounds(Point point) =>

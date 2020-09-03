@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using EmulationModel.Models;
@@ -15,24 +15,24 @@ namespace EmulationModel
 		public Range MutatedGenesCount { get; set; } = new Range(2, 8);
 
 		public int BotInitialHealth { get; set; } = 35;
-		public int BotMaxHealth { get; set; } = 90;
+		public int BotMaxHealth { get; set; } = 100;
 		public int FoodHealthIncrease { get; set; } = 10;
 
 		public string TxtMapFilePath { get; set; } = "src/map.txt";
 		public Dictionary<WorldObjectType, int> InitialItemCountInMap { get; } =
 			new Dictionary<WorldObjectType, int>
 			{
-				{WorldObjectType.Food, 50},
+				{WorldObjectType.Food, 100},
 				{WorldObjectType.Poison, 50},
 			};
 		public Dictionary<WorldObjectType, int> ItemSpawnIterationDelay { get; } =
 			new Dictionary<WorldObjectType, int>
 			{
-				{WorldObjectType.Food, 5},
+				{WorldObjectType.Food, 2},
 				{WorldObjectType.Poison, 5},
 			};
 
-		public int GenIterationsCountGoal { get; set; } = 200000;
+		public int GenIterationsCountGoal { get; set; } = 90;
 		public DelayTypes DelayType { get; set; } = DelayTypes.PerEachGenIteration;
 		public TimeSpan IterationDelay { get; set; } = TimeSpan.FromMilliseconds(1000);
 

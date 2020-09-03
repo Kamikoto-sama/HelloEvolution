@@ -11,18 +11,20 @@ namespace EmulationModel.DefaultImplementations
 	public class DefaultMapFiller: IWorldMapFiller
 	{
 		private readonly EmulationConfig config;
+		private readonly Random random;
 
-		public DefaultMapFiller(EmulationConfig config)
+		public DefaultMapFiller(EmulationConfig config, Random random)
 		{
 			this.config = config;
+			this.random = random;
 		}
 
 		public void FillItems(WorldMap map)
 		{
-			IWorldMapObject foodFactory(Point pos) => new Food(pos);
-			PlaceObject(foodFactory, config.InitialItemCountInMap[WorldObjectType.Food], map);
-			IWorldMapObject poisonFactory(Point pos) => new Poison(pos);
-			PlaceObject(poisonFactory, config.InitialItemCountInMap[WorldObjectType.Poison], map);
+			IWorldMapObject FoodFactory(Point pos) => new Food(pos);
+			PlaceObject(FoodFactory, config.InitialItemCountInMap[WorldObjectType.Food], map);
+			IWorldMapObject PoisonFactory(Point pos) => new Poison(pos);
+			PlaceObject(PoisonFactory, config.InitialItemCountInMap[WorldObjectType.Poison], map);
 		}
 
 		public void FillBots(WorldMap map, IEnumerable<Bot> bots)
@@ -37,12 +39,22 @@ namespace EmulationModel.DefaultImplementations
 
 		public void PlaceObject(Func<Point, IWorldMapObject> objFactory, int count, WorldMap map)
 		{
-			var emptyCells = map.EmptyCells;
 			var emptyCellsCount = map.PlacedObjectsCounts[WorldObjectType.Empty];
 			if (emptyCellsCount < count)
 				throw new Exception($"Not enough cells on the map to place {count} objs");
-			foreach (var (position, _) in emptyCells.Take(count))
+
+			var placementAttemptsCount = 0;
+			var objPlacedCount = 0;
+			while (++placementAttemptsCount < (map.Width - 2) * (map.Height - 2) && objPlacedCount < count)
+			{
+				var xPos = random.Next(1, map.Width - 1);
+				var yPos = random.Next(1, map.Height - 1);
+				var position = new Point(xPos, yPos);
+				if (map[position].Type != WorldObjectType.Empty)
+					continue;
 				map[position] = objFactory(position);
+				objPlacedCount++;
+			}
 		}
 	}
 }

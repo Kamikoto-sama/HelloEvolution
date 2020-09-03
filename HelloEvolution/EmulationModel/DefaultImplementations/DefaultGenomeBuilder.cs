@@ -10,26 +10,29 @@ namespace EmulationModel.DefaultImplementations
 	{
 		private readonly ICommandsCollection availableCommands;
 		private readonly EmulationConfig config;
+		private readonly Random random;
 
-		public DefaultGenomeBuilder(ICommandsCollection availableCommands, EmulationConfig config)
+		public DefaultGenomeBuilder(ICommandsCollection availableCommands, EmulationConfig config, Random random)
 		{
 			this.availableCommands = availableCommands;
 			this.config = config;
+			this.random = random;
 		}
 
-		public IReadOnlyList<Command> Build() =>
-			Enumerable
+		public IReadOnlyList<Command> Build()
+		{
+			return Enumerable
 				.Range(0, config.GenomeSize)
 				.Select(_ => GetRandomSubtypeCommand())
 				.ToList();
+		}
 
 		public IReadOnlyList<Command> MutateGenome(IReadOnlyList<Command> genome)
 		{
-			var random = new Random();
 			var mutationsRange = config.MutatedGenesCount;
-			var genesCountToMutate = random.Next(mutationsRange.Start.Value, mutationsRange.End.Value + 1);
+			var genesCountToMutate = random.Next(mutationsRange.MinValue, mutationsRange.MaxValue + 1);
 			var genesIndexes = new HashSet<int>(Enumerable
-				.Range(0, mutationsRange.End.Value)
+				.Range(0, mutationsRange.MaxValue)
 				.Select(_ => random.Next(0, genesCountToMutate)));
 			return genome
 				.Select((gene, index) =>
@@ -39,14 +42,12 @@ namespace EmulationModel.DefaultImplementations
 
 		private Command GetRandomSubtypeCommand()
 		{
-			var random = new Random();
 			var commandIndex = random.Next(0, availableCommands.TotalSubtypesCount);
 			return availableCommands.GetCommandBySubtypeIndex(commandIndex);
 		}
 
 		private Command GetRandomCommand()
 		{
-			var random = new Random();
 			var commandIndex = random.Next(0, availableCommands.CommandsCount);
 			var commandFactory = availableCommands[commandIndex];
 			var subtypeIndex = random.Next(0, commandFactory.SubtypesCount);
