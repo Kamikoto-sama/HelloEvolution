@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using EmulationModel.Models;
@@ -49,12 +49,6 @@ namespace EmulationModel
 				throw new InvalidDataException("Mutated bots count can't be greater than generation size");
 			if (GenerationSize % ParentsCount != 0)
 				throw new InvalidDataException("GenerationSize % ParentsCount != 0");
-
-			if (MutatedGenesCount.End.Value < MutatedGenesCount.Start.Value)
-			{
-				var message = "MutatedGenesCount: Start value cannot be greater than end value";
-				throw new InvalidDataException(message);
-			}
 		}
 	}
 }
