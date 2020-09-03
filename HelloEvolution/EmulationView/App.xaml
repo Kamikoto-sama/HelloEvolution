@@ -5,6 +5,8 @@
              xmlns:model="clr-namespace:EmulationModel;assembly=EmulationModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+         <Style TargetType="Button">
+                 <Setter Property="Cursor" Value="Hand"></Setter>
+         </Style>
     </Application.Resources>
 </Application>
