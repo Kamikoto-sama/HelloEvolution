@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:EmulationView"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d"
         Title="EmulationConfigWindow"
         WindowStartupLocation="CenterOwner"
@@ -19,13 +19,12 @@
             <Button Grid.Column="1" Content="Close" Click="CloseBtn_Clicked"/>
         </Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <xctk:PropertyGrid
+            <syncfusion:PropertyGrid
                 Name="PropertyGrid"
+                PropertyExpandMode="NestedMode"
                 Width="Auto"
-                Height="Auto"
-                ShowSummary="False"
-                ShowSortOptions="False"
-                ShowTitle="False"/>
+                Height="Auto">
+            </syncfusion:PropertyGrid>
         </ScrollViewer>
     </DockPanel>
 </Window>
