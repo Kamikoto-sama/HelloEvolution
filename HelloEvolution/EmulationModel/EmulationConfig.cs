@@ -34,7 +34,7 @@ namespace EmulationModel
 
 		public int GenIterationsCountGoal { get; set; } = 90;
 		public DelayTypes DelayType { get; set; } = DelayTypes.PerEachGenIteration;
-		public TimeSpan IterationDelay { get; set; } = TimeSpan.FromMilliseconds(1000);
+		public double IterationDelayMilliseconds { get; set; } = TimeSpan.FromSeconds(1).TotalMilliseconds;
 
 		public EmulationConfig()
 		{

@@ -167,7 +167,7 @@ namespace EmulationModel
 				SpawnItem(WorldObjectType.Poison);
 				GenIterationPerformed?.Invoke();
 				if (Config.DelayType == DelayTypes.PerEachGenIteration)
-					Thread.Sleep(Config.IterationDelay);
+					Thread.Sleep(TimeSpan.FromMilliseconds(Config.IterationDelayMilliseconds));
 			}
 			StatusMonitor.GenIterationsStatistics.Add(StatusMonitor.GenerationIterationNumber);
 		}
