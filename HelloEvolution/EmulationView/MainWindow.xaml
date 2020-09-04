@@ -9,12 +9,12 @@
         Width="500" Height="400">
     <DockPanel>
         <Menu DockPanel.Dock="Top" HorizontalAlignment="Center" Cursor="Hand">
-            <MenuItem Header="Adjust to field" Click="AdjustToContent_Click"></MenuItem>
+            <MenuItem Header="Adjust to field" Click="AdjustToContent_Clicked"/>
             <MenuItem Name="StartEmulationAction" Header="Start emulation"
-                      Click="StartEmulation_Click" IsEnabled="False"></MenuItem>
+                      Click="StartEmulation_Clicked" IsEnabled="False"/>
             <MenuItem Name="PauseEmulationAction" Header="Pause emulation"
-                      Click="PauseEmulation_Click" IsEnabled="False"></MenuItem>
-            <MenuItem Header="Configure emulation" Click="ConfigureEmulation_Click"></MenuItem>
+                      Click="PauseEmulation_Clicked" IsEnabled="False"/>
+            <MenuItem Header="Configure emulation" Click="ConfigureEmulation_Clicked"/>
         </Menu>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
             <Grid x:Name="MainGrid" Background="Black">

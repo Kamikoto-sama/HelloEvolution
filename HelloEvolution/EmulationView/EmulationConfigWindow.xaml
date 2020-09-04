@@ -10,19 +10,22 @@
         WindowStartupLocation="CenterOwner"
         Width="450" Height="450">
     <DockPanel>
-        <Grid DockPanel.Dock="Bottom">
+        <Grid DockPanel.Dock="Bottom" MinHeight="30">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <Button Content="Save"/>
-            <Button Grid.Column="1" Content="Close"/>
+            <Button Content="Save" Click="SaveBtn_Clicked"/>
+            <Button Grid.Column="1" Content="Close" Click="CloseBtn_Clicked"/>
         </Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto">
             <xctk:PropertyGrid
                 Name="PropertyGrid"
                 Width="Auto"
-                Height="Auto" />
+                Height="Auto"
+                ShowSummary="False"
+                ShowSortOptions="False"
+                ShowTitle="False"/>
         </ScrollViewer>
     </DockPanel>
 </Window>

@@ -23,7 +23,7 @@ namespace EmulationView
 		{
 			InitializeComponent();
 			emulation = (Emulation) Application.Current.Resources["emulation"];
-			emulation.Config.IterationDelay = TimeSpan.FromMilliseconds(100);
+			emulation.Config.IterationDelayMilliseconds = TimeSpan.FromMilliseconds(100).TotalMilliseconds;
 			emulation.StateChanged += state => Dispatcher.Invoke(() => OnEmulationStateChanged(state));
 			emulation.GenIterationPerformed += () => Dispatcher.Invoke(RenderWorldMap);
 			emulation.RunWorkerCompleted += (_, args) =>
@@ -83,7 +83,7 @@ namespace EmulationView
 	        }
         }
 
-        private void AdjustToContent_Click(object sender, RoutedEventArgs e) => AdjustToContent();
+        private void AdjustToContent_Clicked(object sender, RoutedEventArgs e) => AdjustToContent();
 
         private void RenderWorldMap()
         {
@@ -137,13 +137,13 @@ namespace EmulationView
 	        return objView;
         }
 
-        private void StartEmulation_Click(object sender, RoutedEventArgs e)
+        private void StartEmulation_Clicked(object sender, RoutedEventArgs e)
         {
 	        emulation.Start();
 	        ((MenuItem) sender).IsEnabled = false;
         }
 
-        private void PauseEmulation_Click(object sender, RoutedEventArgs e)
+        private void PauseEmulation_Clicked(object sender, RoutedEventArgs e)
         {
 	        var menuItem = (MenuItem) sender;
 	        if (paused)
@@ -160,7 +160,7 @@ namespace EmulationView
 	        }
         }
 
-        private void ConfigureEmulation_Click(object sender, RoutedEventArgs e) =>
+        private void ConfigureEmulation_Clicked(object sender, RoutedEventArgs e) =>
 	        new EmulationConfigWindow(emulation.Config) {Owner = this}.ShowDialog();
 	}
 }
