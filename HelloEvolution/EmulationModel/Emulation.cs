@@ -29,6 +29,7 @@ namespace EmulationModel
 
 		public event Action<EmulationStateName> StateChanged;
 		public event Action GenIterationPerformed;
+		public event Action GenerationRunEnded;
 
 		public Emulation(IWorldMapProvider mapProvider,
 						IWorldMapFiller mapFiller,
@@ -170,6 +171,7 @@ namespace EmulationModel
 					Thread.Sleep(TimeSpan.FromMilliseconds(Config.IterationDelayMilliseconds));
 			}
 			StatusMonitor.GenIterationsStatistics.Add(StatusMonitor.GenerationIterationNumber);
+			GenerationRunEnded?.Invoke();
 		}
 
 		private void PerformBotAction(Bot bot)

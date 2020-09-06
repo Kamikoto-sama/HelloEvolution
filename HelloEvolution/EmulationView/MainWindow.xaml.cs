@@ -29,6 +29,7 @@ namespace EmulationView
 			emulation.Config.IterationDelayMilliseconds = TimeSpan.FromMilliseconds(100).TotalMilliseconds;
 			emulation.StateChanged += state => Dispatcher.Invoke(() => OnEmulationStateChanged(state));
 			emulation.GenIterationPerformed += () => Dispatcher.Invoke(OnGenIterationPerformed);
+			emulation.GenerationRunEnded += () => Dispatcher.Invoke(OnGenerationRunEnded);
 			emulation.RunWorkerCompleted += (_, args) =>
 			{
 				if (args.Error != null)
@@ -61,8 +62,10 @@ namespace EmulationView
 		private void OnGenIterationPerformed()
 		{
 			RenderWorldMap();
-			emulationStatusMonitor.RenderStats();
+			emulationStatusMonitor.RenderIterationStats();
 		}
+
+		private void OnGenerationRunEnded() => emulationStatusMonitor.RenderGenerationStats();
 
 		private void InitMap()
         {

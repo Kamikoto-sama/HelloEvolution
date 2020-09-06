@@ -4,39 +4,43 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:EmulationView"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:worldObjects="clr-namespace:EmulationModel.Models.WorldObjects;assembly=EmulationModel"
         mc:Ignorable="d"
-        Title="EmulationStatusMonitor" Height="450" Width="300">
+        Title="EmulationStatusMonitor" Height="350" Width="300">
     <StackPanel>
-        <ListBox Name="Stats">
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Alive bots count: "/>
-                <Label Content="00" Name="AliveBotsCountLbl"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Iteration number: "/>
-                <Label Content="00" Name="IterationNumberLbl"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Label Content="Generation number: "/>
-                <Label Content="00" Name="GenerationNumberLbl"/>
-            </StackPanel>
-        </ListBox>
-        <ListBox Name="IterationsResults" ScrollViewer.HorizontalScrollBarVisibility="Auto">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"></StackPanel>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-            <Label Content="33"/>
-        </ListBox>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Alive bots count: " />
+            <Label Content="00" Name="AliveBotsCountLbl" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Iteration number: " />
+            <Label Content="00" Name="IterationNumberLbl" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Generation number: " />
+            <Label Content="00" Name="GenerationNumberLbl" />
+        </StackPanel>
+        <Label>Last iterations results</Label>
+        <Border BorderThickness="1" BorderBrush="Gray">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+                <StackPanel Name="IterationsResults" Orientation="Horizontal" />
+            </ScrollViewer>
+        </Border>
+        <ListView Name="SurvivedBots"
+                  d:DataContext="{d:DesignInstance worldObjects:Bot}"
+                  HorizontalAlignment="Center"
+                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding Path=Health}"
+                        Header="Health level" />
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding Path=GenerationNumber}"
+                        Header="Last mutation" />
+                </GridView>
+            </ListView.View>
+        </ListView>
     </StackPanel>
 </Window>
