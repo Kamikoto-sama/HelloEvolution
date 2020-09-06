@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using EmulationModel.Models;
@@ -19,18 +19,8 @@ namespace EmulationModel
 		public int FoodHealthIncrease { get; set; } = 10;
 
 		public string TxtMapFilePath { get; set; } = "src/map.txt";
-		public Dictionary<WorldObjectType, int> InitialItemCountInMap { get; } =
-			new Dictionary<WorldObjectType, int>
-			{
-				{WorldObjectType.Food, 100},
-				{WorldObjectType.Poison, 50},
-			};
-		public Dictionary<WorldObjectType, int> ItemSpawnIterationDelay { get; } =
-			new Dictionary<WorldObjectType, int>
-			{
-				{WorldObjectType.Food, 2},
-				{WorldObjectType.Poison, 5},
-			};
+		public ItemsSpawnSettings MaxItemsCountOnMap { get; } = new ItemsSpawnSettings {Food = 100, Poison = 50};
+		public ItemsSpawnSettings ItemSpawnIterationDelay { get; } = new ItemsSpawnSettings{Food = 2, Poison = 5};
 
 		public int GenIterationsCountGoal { get; set; } = 90;
 		public DelayTypes DelayType { get; set; } = DelayTypes.PerEachGenIteration;
