@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using EmulationModel;
+using EmulationView.ViewModels;
 
 namespace EmulationView
 {
@@ -8,10 +10,16 @@ namespace EmulationView
         public EmulationConfigWindow(EmulationConfig config)
         {
             InitializeComponent();
-            PropertyGrid.SelectedObject = config;
+            PropertyGrid.SelectedObject = new EmulationConfigViewModel(config);
         }
 
-        private void CloseBtn_Clicked(object sender, RoutedEventArgs e) => Close();
+        private void CloseBtn_Clicked(object sender, RoutedEventArgs e) => Hide();
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            e.Cancel = true;
+            Hide();
+        }
 
         private void SaveBtn_Clicked(object sender, RoutedEventArgs e)
         {

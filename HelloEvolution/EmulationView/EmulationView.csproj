@@ -19,7 +19,6 @@
 
     <ItemGroup>
       <PackageReference Include="Extended.Wpf.Toolkit" Version="4.0.1" />
-      <PackageReference Include="Syncfusion.PropertyGrid.WPF" Version="18.2.0.56" />
     </ItemGroup>
 
 </Project>
