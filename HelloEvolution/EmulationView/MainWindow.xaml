@@ -15,13 +15,14 @@
             <MenuItem Name="PauseEmulationAction" Header="Pause emulation"
                       Click="PauseEmulation_Clicked" IsEnabled="False"/>
             <MenuItem Header="Configure emulation" Click="ConfigureEmulation_Clicked"/>
+            <MenuItem Header="Emulation state monitor" Click="EmulationStateMonitorBtn_Clicked"/>
         </Menu>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
             <Grid x:Name="MainGrid" Background="Black">
                 <Button x:Name="InitEmulationBtn"
                         Content="Init emulation"
                         FontSize="30"
-                        Click="InitEmulation"
+                        Click="InitEmulationBtn_Clicked"
                         Cursor="Hand"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"/>

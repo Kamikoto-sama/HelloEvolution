@@ -19,24 +19,24 @@ namespace EmulationView
 		private bool paused;
 		private const int CellSize = 25;
 
+		private readonly EmulationConfigWindow emulationConfigWindow;
+		private readonly EmulationStatusMonitor emulationStatusMonitor;
+
 		public MainWindow()
 		{
 			InitializeComponent();
 			emulation = (Emulation) Application.Current.Resources["emulation"];
 			emulation.Config.IterationDelayMilliseconds = TimeSpan.FromMilliseconds(100).TotalMilliseconds;
 			emulation.StateChanged += state => Dispatcher.Invoke(() => OnEmulationStateChanged(state));
-			emulation.GenIterationPerformed += () => Dispatcher.Invoke(RenderWorldMap);
+			emulation.GenIterationPerformed += () => Dispatcher.Invoke(OnGenIterationPerformed);
 			emulation.RunWorkerCompleted += (_, args) =>
 			{
 				if (args.Error != null)
 					MessageBox.Show(args.Error.Message);
 			};
-		}
 
-		private void InitEmulation(object sender, RoutedEventArgs e)
-		{
-			emulation.Init();
-			MainGrid.Children.Remove(InitEmulationBtn);
+			emulationConfigWindow = new EmulationConfigWindow(emulation.Config);
+			emulationStatusMonitor = new EmulationStatusMonitor(emulation.StatusMonitor);
 		}
 
 		private void OnEmulationStateChanged(EmulationStateName state)
@@ -58,7 +58,13 @@ namespace EmulationView
 	        Title = $"Main window - {state}";
         }
 
-        private void InitMap()
+		private void OnGenIterationPerformed()
+		{
+			RenderWorldMap();
+			emulationStatusMonitor.RenderStats();
+		}
+
+		private void InitMap()
         {
 	        var columnsCount = emulation.Map.Width;
 	        var rowsCount = emulation.Map.Height;
@@ -69,7 +75,7 @@ namespace EmulationView
 		        MainGrid.RowDefinitions.Add(new RowDefinition{MinHeight = CellSize});
         }
 
-        private void AdjustToContent()
+		private void AdjustToContent()
         {
 	        var screenHeight = SystemParameters.PrimaryScreenHeight;
 	        var screenWidth = SystemParameters.PrimaryScreenWidth;
@@ -83,9 +89,7 @@ namespace EmulationView
 	        }
         }
 
-        private void AdjustToContent_Clicked(object sender, RoutedEventArgs e) => AdjustToContent();
-
-        private void RenderWorldMap()
+		private void RenderWorldMap()
         {
 	        MainGrid.Children.Clear();
 	        foreach (var (position, cell) in emulation.Map)
@@ -97,7 +101,7 @@ namespace EmulationView
 	        }
         }
 
-        private UIElement GetWorldObjView(IWorldMapObject cell)
+		private UIElement GetWorldObjView(IWorldMapObject cell)
         {
 	        UIElement objView = new Border
 	        {
@@ -137,13 +141,21 @@ namespace EmulationView
 	        return objView;
         }
 
-        private void StartEmulation_Clicked(object sender, RoutedEventArgs e)
+		private void AdjustToContent_Clicked(object sender, RoutedEventArgs e) => AdjustToContent();
+
+		private void InitEmulationBtn_Clicked(object sender, RoutedEventArgs e)
+		{
+			emulation.Init();
+			MainGrid.Children.Remove(InitEmulationBtn);
+		}
+
+		private void StartEmulation_Clicked(object sender, RoutedEventArgs e)
         {
 	        emulation.Start();
 	        ((MenuItem) sender).IsEnabled = false;
         }
 
-        private void PauseEmulation_Clicked(object sender, RoutedEventArgs e)
+		private void PauseEmulation_Clicked(object sender, RoutedEventArgs e)
         {
 	        var menuItem = (MenuItem) sender;
 	        if (paused)
@@ -160,7 +172,16 @@ namespace EmulationView
 	        }
         }
 
-        private void ConfigureEmulation_Clicked(object sender, RoutedEventArgs e) =>
-	        new EmulationConfigWindow(emulation.Config) {Owner = this}.ShowDialog();
+        private void ConfigureEmulation_Clicked(object sender, RoutedEventArgs e)
+        {
+	        emulationConfigWindow.Owner ??= this;
+	        emulationConfigWindow.Show();
+        }
+
+        private void EmulationStateMonitorBtn_Clicked(object sender, RoutedEventArgs e)
+        {
+	        emulationStatusMonitor.Owner ??= this;
+	        emulationStatusMonitor.Show();
+        }
 	}
 }

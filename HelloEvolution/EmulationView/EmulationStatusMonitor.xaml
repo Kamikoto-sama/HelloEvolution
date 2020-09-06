@@ -1,0 +1,42 @@
+﻿<Window x:Class="EmulationView.EmulationStatusMonitor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:EmulationView"
+        mc:Ignorable="d"
+        Title="EmulationStatusMonitor" Height="450" Width="300">
+    <StackPanel>
+        <ListBox Name="Stats">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Alive bots count: "/>
+                <Label Content="00" Name="AliveBotsCountLbl"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Iteration number: "/>
+                <Label Content="00" Name="IterationNumberLbl"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Generation number: "/>
+                <Label Content="00" Name="GenerationNumberLbl"/>
+            </StackPanel>
+        </ListBox>
+        <ListBox Name="IterationsResults" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"></StackPanel>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+            <Label Content="33"/>
+        </ListBox>
+    </StackPanel>
+</Window>
