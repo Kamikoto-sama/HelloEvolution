@@ -216,7 +216,7 @@ namespace EmulationModel
 			if (iterationsCount < Config.ItemSpawnIterationDelay[objectType])
 				return;
 			iterationsCountSinceLastItemSpawn[objectType] = 0;
-			if (Map.PlacedObjectsCounts[objectType] >= Config.InitialItemCountInMap[objectType])
+			if (Map.PlacedObjectsCounts[objectType] >= Config.MaxItemsCountOnMap[objectType])
 				return;
 			IWorldMapObject ObjFactory(Point pos) => WorldObjFactory.GetWorldObj(objectType, pos);
 			mapFiller.PlaceObject(ObjFactory, 1, Map);

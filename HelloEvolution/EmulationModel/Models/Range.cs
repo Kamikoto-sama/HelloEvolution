@@ -2,11 +2,11 @@
 
 namespace EmulationModel.Models
 {
-    public struct Range
+    public class Range
     {
         private readonly bool allowNegative;
-        public int MaxValue { get; }
-        public int MinValue { get; }
+        public int MaxValue { get; set; }
+        public int MinValue { get; set; }
 
         public Range(int minValue, int maxValue, bool allowNegative = false)
         {
@@ -23,5 +23,7 @@ namespace EmulationModel.Models
             if (!allowNegative && (MinValue < 0 || MaxValue < 0))
                 throw new ArgumentException("Negative values are not allowed");
         }
+
+        public override string ToString() => $"From {MinValue} to {MaxValue}";
     }
 }

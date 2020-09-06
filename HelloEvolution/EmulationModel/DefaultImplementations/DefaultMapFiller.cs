@@ -22,9 +22,9 @@ namespace EmulationModel.DefaultImplementations
 		public void FillItems(WorldMap map)
 		{
 			IWorldMapObject FoodFactory(Point pos) => new Food(pos);
-			PlaceObject(FoodFactory, config.InitialItemCountInMap[WorldObjectType.Food], map);
+			PlaceObject(FoodFactory, config.MaxItemsCountOnMap.Food, map);
 			IWorldMapObject PoisonFactory(Point pos) => new Poison(pos);
-			PlaceObject(PoisonFactory, config.InitialItemCountInMap[WorldObjectType.Poison], map);
+			PlaceObject(PoisonFactory, config.MaxItemsCountOnMap.Poison, map);
 		}
 
 		public void FillBots(WorldMap map, IEnumerable<Bot> bots)

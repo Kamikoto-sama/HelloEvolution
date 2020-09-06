@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using EmulationModel.Models;
-using EmulationModel.Models.WorldObjects;
 
 namespace EmulationModel
 {
